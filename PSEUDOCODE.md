@@ -39,8 +39,9 @@
 - user: User
 - record: Record
 - dateAdded: Date
-  🗃️ Repositories
-  UserRepository
+
+🗃️ Repositories
+UserRepository
 - findByUsername(String username): Optional<User>
 
 RecordRepository
@@ -56,8 +57,9 @@ ArtistRepository
 
 CollectionRepository
 - findByUser(User user): List<Collection>
-  🧠 Services
-  UserService
+
+🧠 Services
+UserService
 - registerUser(UserDTO): User
 - authenticateUser(Credentials): Boolean
 
