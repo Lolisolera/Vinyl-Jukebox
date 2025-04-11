@@ -1,46 +1,56 @@
-🎛️ Vinyl-Jukebox – Full Stack Project Pseudocode
+# 🎛️ Vinyl-Jukebox – Full Stack Project Pseudocode (Updated with Spotify)
 
-📦 BACKEND (Spring Boot / Java)
-🧱 Entities
+## 1. **BACKEND (Spring Boot / Java)**
+
+### 1.1 **Entities**
+
 @Entity User
-- id: Integer
+- id: Long
 - username: String
 - password: String
 - email: String
 - COLLECTION: List<Record>
 
 @Entity Record
-- id: Integer
+- id: Long
 - title: String
 - releaseYear: Integer
 - artist: Artist
 - genres: Set<Genre>
 - albumCover: AlbumCover
+- spotifyTrackId: String?   // (NEW) optional field, e.g. "3n3Ppam7vgaVa1iaRUc9Lp"
 
 @Entity Artist
-- id: Integer
+- id: Long
 - name: String
 - bio: String
 - country: String
 - records: List<Record>
 
 @Entity Genre
-- id: Integer
+- id: Long
 - name: String
 - records: Set<Record>
 
 @Entity AlbumCover
-- id: Integer
+- id: Long
 - imageUrl: String
 - record: Record
 
-@Entity Collection
-- id: Integer
+@Entity RecordCollection
+- id: Long
 - user: User
 - record: Record
 - dateAdded: Date
+```
 
-🗃️ Repositories
+> **Note**: We add `spotifyTrackId` to `Record` so we can reference tracks on Spotify without hosting audio ourselves.
+
+---
+
+### 1.2 **Repositories**
+
+```text
 UserRepository
 - findByUsername(String username): Optional<User>
 
@@ -48,31 +58,59 @@ RecordRepository
 - findByTitle(String title): List<Record>
 - findByGenres(Genre genre): List<Record>
 - findByArtist(Artist artist): List<Record>
-
-GenreRepository
-- findAll(): List<Genre>
+// Possibly: findBySpotifyTrackId(String spotifyTrackId)
 
 ArtistRepository
 - findAll(): List<Artist>
 
-CollectionRepository
-- findByUser(User user): List<Collection>
+GenreRepository
+- findAll(): List<Genre>
 
-🧠 Services
+RecordCollectionRepository
+- findByUser(User user): List<RecordCollection>
+```
+
+---
+
+### 1.3 **Services**
+
+```text
 UserService
 - registerUser(UserDTO): User
 - authenticateUser(Credentials): Boolean
 
 RecordService
 - getAllRecords(): List<Record>
-- getRecordById(int id): Record
+- getRecordById(long id): Record
 - searchRecords(String query): List<Record>
+- createOrUpdateRecord(Record record): Record // handles local + Spotify-based track references
 
 CollectionService
-- addToCollection(int userId, int recordId): Collection
-- getUserCollection(int userId): List<Collection>
-  🌐 Controllers
-  UserController
+- addToCollection(long userId, long recordId): RecordCollection
+- getUserCollection(long userId): List<RecordCollection>
+```
+
+---
+
+### 1.4 **Spotify Integration**
+
+```text
+SpotifyIntegrationService
+- searchTracks(String query): List<SpotifyTrackDTO>
+  // calls Spotify’s /search endpoint, returns minimal info (id, name, artist)
+- getTrackById(String spotifyTrackId): SpotifyTrackDTO
+  // calls Spotify’s /tracks/{id} endpoint
+
+// Only store the track ID in your DB if you want to reference it locally.
+// The audio streams remain on Spotify’s side.
+```
+
+---
+
+### 1.5 **Controllers**
+
+```text
+UserController
 - POST /users/register → register new user
 - POST /users/login → validate credentials
 
@@ -80,116 +118,111 @@ RecordController
 - GET /records → get all records
 - GET /records/{id} → get record by ID
 - GET /records/search?q=term → search by title/genre/artist
+- POST /records → create or update record
+// Possibly a special endpoint if you want to create a local record from a Spotify track ID
 
 CollectionController
-- POST /collections → add record to user's collection
+- POST /collections → add record to user’s collection
 - GET /collections/{userId} → get user’s collection
 
-🧩 DATABASE (MySQL)
-💽 Tables and Relationships
-TABLE users
-- id PRIMARY KEY
-- username
-- password
-- email
+SpotifyController (Optional)
+- GET /spotify/search?q=term → calls SpotifyIntegrationService
+- GET /spotify/tracks/{spotifyTrackId} → returns track details
+```
 
+> You can combine Spotify endpoints into `RecordController` if you prefer.
+
+---
+
+## 2. **DATABASE (PostgreSQL or MySQL)**
+
+All tables remain the same, but add a column in `records`:
+
+```text
 TABLE records
-- id PRIMARY KEY
-- title
-- release_year
-- artist_id FOREIGN KEY → artists.id
-- album_cover_id FOREIGN KEY → album_covers.id
+- id BIGSERIAL PRIMARY KEY
+- title VARCHAR
+- release_year INT
+- artist_id BIGINT FK → artists.id
+- album_cover_id BIGINT FK → album_covers.id
+- spotify_track_id VARCHAR NULL  // optional
+```
 
-TABLE artists
-- id PRIMARY KEY
-- name
-- bio
-- country
+Everything else stays the same.
 
-TABLE genres
-- id PRIMARY KEY
-- name
+---
 
-TABLE record_genres
-- record_id FOREIGN KEY → records.id
-- genre_id FOREIGN KEY → genres.id
+## 3. **FRONTEND (React + TypeScript + SCSS)**
 
-TABLE album_covers
-- id PRIMARY KEY
-- image_url
+### 3.1 **Components** (Retro Theme)
 
-TABLE collections
-- id PRIMARY KEY
-- user_id FOREIGN KEY → users.id
-- record_id FOREIGN KEY → records.id
-- date_added
-
-
-💻 FRONTEND (React + TypeScript + SCSS)
-🧩 Components
 <App>
-- Renders Header, Routes, Footer
+ - Renders Header, Routes, Footer
 
 <HomePage>
-  - Insert Coin animation → redirect to RecordList
+ - Insert Coin animation → leads to RecordList
 
 <RecordList>
-  - useEffect(): fetch /records
-  - Search bar, Filter dropdown
-  - Display RecordCard
+ - useEffect(): fetch /records
+ - Search bar (local DB)
+ - Optional: “Search Spotify” → fetch from /spotify/search
+ - Filter dropdown
+ - Display RecordCard
 
 <RecordCard>
-  - Props: record
-  - OnClick: navigate to RecordDetail
+ - Props: record
+ - OnClick → navigate to RecordDetail
 
 <RecordDetail>
-  - useEffect(): fetch /records/{id}
-  - Show record info
-  - Add to collection → POST /collections
+ - useEffect(): fetch /records/{id}
+ - Show record info or Spotify preview link
+ - “Add to collection” → POST /collections
 
 <UserCollection>
-  - useEffect(): fetch /collections/{userId}
-  - Show saved records
+ - useEffect(): fetch /collections/{userId}
+ - Show saved records
 
 <Login/Register>
-- Form submission → POST /users/login or /register
-- Store user in localStorage/context
+ - Form submission → POST /users/login or /register
+ - Store user in localStorage/context
 
 api.ts (utils)
-- Contains functions for all endpoints (GET, POST, etc.)
-
-🔄 FLOW OVERVIEW
-USER lands on HomePage
-→ Clicks Insert Coin → goes to RecordList
-→ Browses/searches records → Clicks a record
-→ Sees RecordDetail → Clicks "Add to collection"
-→ POST request sent
-
-USER optionally logs in/registers
-→ USER accesses /collections → sees their saved records
-
-☁️ DEPLOYMENT PLAN
-📦 Backend (Spring Boot)
-1. Package with Maven: mvn clean install
-2. Deploy to:
-    * Heroku (easy for Java apps, free tier)
-    * Render or Railway (modern alternatives)
-    * Set environment variables for MySQL DB URL, username, password
-      💽 MySQL
-* Use PlanetScale, ElephantSQL, or host your own via ClearDB (Heroku)
-* Ensure connection URL is accessible from Spring Boot via application.properties
-  💻 Frontend (ReactTS)
-1. Build frontend: npm run build
-2. Deploy to:
-    * Netlify, Vercel, or GitHub Pages
-    * Configure it to proxy API requests to your backend URL
-      🧪 Optional
-* Add CI/CD with GitHub Actions for auto-deploy
-* Use .env files to manage frontend/backend credentials
+ - Contains functions for all endpoints (GET, POST, etc.)
 
 
+> Emphasize a **retro vinyl machine** vibe. If a track has `spotifyTrackId`, show a “Preview on Spotify” button or embed.
+
+## 4. **FLOW OVERVIEW**
+
+1) USER lands on HomePage
+   → Insert Coin → goes to RecordList
+   → Browses local records or searches Spotify
+   → Chooses a record → goes to RecordDetail
+   → If record is from Spotify, show link or embed
+   → “Add to collection” → POST /collections
+
+2) USER optionally logs in / registers
+   → sees own saved records in <UserCollection>
 
 
+## 5. **DEPLOYMENT PLAN**
 
+Backend (Spring Boot)
+1) Package with Maven: mvn clean install
+2) Deploy to e.g. Render, Railway, or Heroku
+3) Configure environment variables for DB + Spotify credentials
+
+Database (PostgreSQL/MySQL)
+- PlanetScale, ElephantSQL, or ClearDB (Heroku)
+- Ensure DB is publicly accessible
+
+Frontend (ReactTS)
+1) npm run build
+2) Deploy to Netlify, Vercel, or GitHub Pages
+3) Proxy requests to your backend URL
+
+Optional extras:
+- CI/CD with GitHub Actions for automatic deploy
+- .env for sensitive config
 
 

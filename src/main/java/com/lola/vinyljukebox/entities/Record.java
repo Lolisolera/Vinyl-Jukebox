@@ -18,10 +18,13 @@ public class Record {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+
     private Integer releaseYear;
 
     @ManyToOne
+    @JoinColumn(name = "artist_id")
     private Artist artist;
 
     @ManyToMany
@@ -34,6 +37,9 @@ public class Record {
 
     @OneToOne(mappedBy = "record", cascade = CascadeType.ALL)
     private AlbumCover albumCover;
+
+    @Column(name = "spotify_track_id", unique = true)
+    private String spotifyTrackId;
+
+    private String previewUrl; // ⭐️ NEW! URL to 30-second Spotify clip
 }
-//@ManyToMany with a JoinTable to link Record and Genre.
-//@OneToOne for AlbumCover, referencing the record field on the other side.
