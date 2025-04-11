@@ -38,7 +38,7 @@ public class RecordController {
         return spotifyService.searchTracks(query);
     }
 
-    // 🌐 POST: Add record from Spotify
+    // POST: Add record from Spotify
     @PostMapping("/spotify-add")
     public Record createRecordFromSpotify(@RequestParam String trackId) {
         SpotifyTrackDTO dto = spotifyService.getTrackById(trackId);

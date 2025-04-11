@@ -31,13 +31,7 @@ public class DataLoader implements CommandLineRunner {
         dombrance.setCountry("FRANCE");
         artistRepository.save(dombrance);
 
-        Record aoc = new Record();
-        aoc.setTitle("AOC");
-        aoc.setReleaseYear(2021);
-        aoc.setArtist(dombrance);
-        aoc.setSpotifyTrackId("fakeSpotifyId123"); // placeholder
-        aoc.setPreviewUrl("https://p.scdn.co/mp3-preview/sampleAOC"); // placeholder
-        recordRepository.save(aoc);
+        createRecordIfNotExists("AOC", 2021, "fakeSpotifyId123", "https://p.scdn.co/mp3-preview/sampleAOC", dombrance);
 
         // Second Artist
         Artist laFemme = new Artist();
@@ -46,13 +40,7 @@ public class DataLoader implements CommandLineRunner {
         laFemme.setCountry("FRANCE");
         artistRepository.save(laFemme);
 
-        Record elleNeTaimePas = new Record();
-        elleNeTaimePas.setTitle("Elle ne t'aime pas");
-        elleNeTaimePas.setReleaseYear(2016);
-        elleNeTaimePas.setArtist(laFemme);
-        elleNeTaimePas.setSpotifyTrackId("fakeSpotifyId134"); // placeholder
-        elleNeTaimePas.setPreviewUrl("https://p.scdn.co/mp3-preview/sampleElleNeTaimePas"); // placeholder
-        recordRepository.save(elleNeTaimePas);
+        createRecordIfNotExists("Elle ne t'aime pas", 2016, "fakeSpotifyId134", "https://p.scdn.co/mp3-preview/sampleElleNeTaimePas", laFemme);
 
         // Third Artist
         Artist juniore = new Artist();
@@ -61,32 +49,29 @@ public class DataLoader implements CommandLineRunner {
         juniore.setCountry("FRANCE");
         artistRepository.save(juniore);
 
-        Record panique = new Record();
-        panique.setTitle("Panique");
-        panique.setReleaseYear(2017);
-        panique.setArtist(juniore);
-        panique.setSpotifyTrackId("fakeSpotifyId145"); // placeholder
-        panique.setPreviewUrl("https://p.scdn.co/mp3-preview/samplePanique"); // placeholder
-        recordRepository.save(panique);
+        createRecordIfNotExists("Panique", 2017, "fakeSpotifyId145", "https://p.scdn.co/mp3-preview/samplePanique", juniore);
 
-        // Forth Artist
+        // Fourth Artist
         Artist samaran = new Artist();
         samaran.setName("Samaran");
         samaran.setBio("Electronic music producer from London.");
         samaran.setCountry("UK");
         artistRepository.save(samaran);
 
-        Record parisMadness = new Record();
-        parisMadness.setTitle("Paris Madness");
-        parisMadness.setReleaseYear(2018);
-        parisMadness.setArtist(samaran);
-        parisMadness.setSpotifyTrackId("fakeSpotifyId136"); // placeholder
-        parisMadness.setPreviewUrl("https://p.scdn.co/mp3-preview/sampleParismadness"); // placeholder
-        recordRepository.save(parisMadness);
-
+        createRecordIfNotExists("Paris Madness", 2018, "fakeSpotifyId136", "https://p.scdn.co/mp3-preview/sampleParismadness", samaran);
 
         System.out.println("DataLoader: Sample data loaded!");
     }
 
-
+    private void createRecordIfNotExists(String title, Integer year, String trackId, String previewUrl, Artist artist) {
+        if (!recordRepository.findBySpotifyTrackId(trackId).isPresent()) {
+            Record record = new Record();
+            record.setTitle(title);
+            record.setReleaseYear(year);
+            record.setSpotifyTrackId(trackId);
+            record.setPreviewUrl(previewUrl);
+            record.setArtist(artist);
+            recordRepository.save(record);
+        }
+    }
 }
