@@ -80,7 +80,18 @@ public class SpotifyIntegrationService {
 
             List<Map<String, Object>> artists = (List<Map<String, Object>>) body.get("artists");
             if (artists != null && !artists.isEmpty()) {
-                dto.setArtistName((String) artists.get(0).get("name"));
+                Map<String, Object> artistInfo = artists.get(0);
+                dto.setArtistName((String) artistInfo.get("name"));
+
+                // Fetch artist details to get genres
+                String artistId = (String) artistInfo.get("id");
+                String artistUrl = SPOTIFY_API_BASE_URL + "/artists/" + artistId;
+
+                ResponseEntity<Map> artistResponse = restTemplate.exchange(artistUrl, HttpMethod.GET, request, Map.class);
+                if (artistResponse.getStatusCode() == HttpStatus.OK && artistResponse.getBody() != null) {
+                    List<String> genres = (List<String>) artistResponse.getBody().get("genres");
+                    dto.setGenres(genres);
+                }
             }
 
             return dto;

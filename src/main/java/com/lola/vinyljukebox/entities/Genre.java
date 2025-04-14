@@ -22,6 +22,9 @@ public class Genre {
 
     @ManyToMany(mappedBy = "genres")
     private Set<Record> records;
+
+    public Genre(Object o, String genreName) {
+    }
 }
 //The inverse side of @ManyToMany from Record.
 //Using Set to avoid duplicates (and it’s typically more efficient for ManyToMany relations).
