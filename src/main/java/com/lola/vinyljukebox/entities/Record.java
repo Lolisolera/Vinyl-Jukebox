@@ -1,5 +1,7 @@
 package com.lola.vinyljukebox.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +27,7 @@ public class Record {
 
     @ManyToOne
     @JoinColumn(name = "artist_id")
+    @JsonManagedReference // Artist -> Records
     private Artist artist;
 
     @ManyToMany
@@ -35,11 +38,20 @@ public class Record {
     )
     private Set<Genre> genres;
 
-    @OneToOne(mappedBy = "record", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference // Prevent infinite loop on AlbumCover -> Record -> AlbumCover...
     private AlbumCover albumCover;
 
     @Column(name = "spotify_track_id", unique = true)
     private String spotifyTrackId;
 
-    private String previewUrl; // URL to 30-second Spotify clip
+    private String previewUrl;
+
+    // Optional helper method to set both sides of the relationship
+    public void setAlbumCover(AlbumCover albumCover) {
+        this.albumCover = albumCover;
+        if (albumCover != null) {
+            albumCover.setRecord(this);
+        }
+    }
 }

@@ -1,9 +1,10 @@
 package com.lola.vinyljukebox.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "artists")
@@ -22,8 +23,7 @@ public class Artist {
     private String bio;
     private String country;
 
-    @OneToMany(mappedBy = "artist")
-    private List<Record> records;
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<Record> records;
 }
-
-//@OneToMany(mappedBy = "artist") ties back to the Record entity’s @ManyToOne private Artist artist;

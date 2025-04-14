@@ -1,10 +1,13 @@
 package com.lola.vinyljukebox.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "album_covers")
+@Table(name = "album_covers", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "record_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,8 +21,8 @@ public class AlbumCover {
 
     private String imageUrl;
 
-    @OneToOne
-    @JoinColumn(name = "record_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "record_id", nullable = false, unique = true)
+    @JsonBackReference // Prevents circular JSON recursion
     private Record record;
 }
-//@JoinColumn(name = "record_id") ensures the AlbumCover table has a column referencing the Record it belongs to.

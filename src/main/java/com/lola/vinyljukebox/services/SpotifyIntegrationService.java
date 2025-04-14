@@ -66,7 +66,6 @@ public class SpotifyIntegrationService {
         }
         return results;
     }
-
     public SpotifyTrackDTO getTrackById(String spotifyTrackId) {
         String token = getAccessToken();
         String url = SPOTIFY_API_BASE_URL + "/tracks/" + spotifyTrackId;
@@ -76,43 +75,51 @@ public class SpotifyIntegrationService {
         headers.set("Authorization", "Bearer " + token);
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
 
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            Map<String, Object> body = response.getBody();
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                Map<String, Object> body = response.getBody();
 
-            SpotifyTrackDTO dto = new SpotifyTrackDTO();
-            dto.setId((String) body.get("id"));
-            dto.setName((String) body.get("name"));
-            dto.setPreviewUrl((String) body.get("preview_url"));
+                SpotifyTrackDTO dto = new SpotifyTrackDTO();
+                dto.setId((String) body.get("id"));
+                dto.setName((String) body.get("name"));
+                dto.setPreviewUrl((String) body.get("preview_url"));
 
-            List<Map<String, Object>> artists = (List<Map<String, Object>>) body.get("artists");
-            if (artists != null && !artists.isEmpty()) {
-                Map<String, Object> artistInfo = artists.get(0);
-                dto.setArtistName((String) artistInfo.get("name"));
+                List<Map<String, Object>> artists = (List<Map<String, Object>>) body.get("artists");
+                if (artists != null && !artists.isEmpty()) {
+                    Map<String, Object> artistInfo = artists.get(0);
+                    dto.setArtistName((String) artistInfo.get("name"));
 
-                // Get genre info
-                String artistId = (String) artistInfo.get("id");
-                String artistUrl = SPOTIFY_API_BASE_URL + "/artists/" + artistId;
+                    // Get genre info
+                    String artistId = (String) artistInfo.get("id");
+                    String artistUrl = SPOTIFY_API_BASE_URL + "/artists/" + artistId;
 
-                ResponseEntity<Map> artistResponse = restTemplate.exchange(artistUrl, HttpMethod.GET, request, Map.class);
-                if (artistResponse.getStatusCode() == HttpStatus.OK && artistResponse.getBody() != null) {
-                    List<String> genres = (List<String>) artistResponse.getBody().get("genres");
-                    dto.setGenres(genres);
+                    ResponseEntity<Map> artistResponse = restTemplate.exchange(artistUrl, HttpMethod.GET, request, Map.class);
+                    if (artistResponse.getStatusCode() == HttpStatus.OK && artistResponse.getBody() != null) {
+                        List<String> genres = (List<String>) artistResponse.getBody().get("genres");
+                        dto.setGenres(genres);
+                    }
                 }
+
+                Map<String, Object> album = (Map<String, Object>) body.get("album");
+                List<Map<String, Object>> images = (List<Map<String, Object>>) album.get("images");
+                if (images != null && !images.isEmpty()) {
+                    dto.setCoverImageUrl((String) images.get(0).get("url"));
+                }
+
+                return dto;
             }
 
-            Map<String, Object> album = (Map<String, Object>) body.get("album");
-            List<Map<String, Object>> images = (List<Map<String, Object>>) album.get("images");
-            if (images != null && !images.isEmpty()) {
-                dto.setCoverImageUrl((String) images.get(0).get("url"));
-            }
-
-            return dto;
+        } catch (org.springframework.web.client.HttpClientErrorException.NotFound ex) {
+            System.err.println("Spotify track not found: " + spotifyTrackId);
+            return null; // Gracefully return null if not found
         }
 
-        throw new RuntimeException("Spotify track not found: " + spotifyTrackId);
+        throw new RuntimeException("Failed to fetch track from Spotify: " + spotifyTrackId);
     }
+
+
 
     private String getAccessToken() {
         String authEndpoint = "https://accounts.spotify.com/api/token";
