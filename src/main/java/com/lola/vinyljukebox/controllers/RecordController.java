@@ -1,7 +1,9 @@
 package com.lola.vinyljukebox.controllers;
 
 import com.lola.vinyljukebox.dto.SpotifyTrackDTO;
+import com.lola.vinyljukebox.entities.Artist;
 import com.lola.vinyljukebox.entities.Record;
+import com.lola.vinyljukebox.repositories.ArtistRepository;
 import com.lola.vinyljukebox.services.RecordService;
 import com.lola.vinyljukebox.services.SpotifyIntegrationService;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +16,12 @@ public class RecordController {
 
     private final RecordService recordService;
     private final SpotifyIntegrationService spotifyService;
+    private final ArtistRepository artistRepository;
 
-    public RecordController(RecordService recordService, SpotifyIntegrationService spotifyService) {
+    public RecordController(RecordService recordService, SpotifyIntegrationService spotifyService, ArtistRepository artistRepository) {
         this.recordService = recordService;
         this.spotifyService = spotifyService;
+        this.artistRepository = artistRepository;
     }
 
     // GET: Search Spotify (keep this above the generic /{id} mapping)
@@ -31,11 +35,21 @@ public class RecordController {
     public Record createRecordFromSpotify(@RequestParam String trackId) {
         SpotifyTrackDTO dto = spotifyService.getTrackById(trackId);
 
+        // Check if artist exists
+        Artist artist = artistRepository.findByName(dto.getArtistName())
+                .orElseGet(() -> {
+                    Artist newArtist = new Artist();
+                    newArtist.setName(dto.getArtistName());
+                    newArtist.setBio("Imported from Spotify");
+                    newArtist.setCountry("Unknown");
+                    return artistRepository.save(newArtist);
+                });
+
         Record record = new Record();
         record.setTitle(dto.getName());
         record.setSpotifyTrackId(dto.getId());
         record.setPreviewUrl(dto.getPreviewUrl());
-        // TODO: Add artist if needed later
+        record.setArtist(artist);
 
         return recordService.createOrUpdateRecord(record);
     }
