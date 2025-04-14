@@ -55,4 +55,6 @@ public class RecordController {
     public Record getRecordById(@PathVariable Long id) {
         return recordService.getRecordById(id);
     }
+
+
 }

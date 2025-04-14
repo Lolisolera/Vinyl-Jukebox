@@ -13,10 +13,9 @@ public class SpotifyTrackDTO {
     private String previewUrl;
     private String artistName;
     private List<String> genres;
-    private String coverImageUrl; // <-- add this field properly
-
-    // No need for manual getter/setter since Lombok handles it now
+    private String coverImageUrl;
 }
+
 
 
 // This DTO (Data Transfer Object) is used to represent the simplified track information retrieved from the Spotify API,
