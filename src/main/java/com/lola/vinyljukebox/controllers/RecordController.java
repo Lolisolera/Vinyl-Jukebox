@@ -20,25 +20,13 @@ public class RecordController {
         this.spotifyService = spotifyService;
     }
 
-    //  GET: List all records
-    @GetMapping
-    public List<Record> getAllRecords() {
-        return recordService.getAllRecords();
-    }
-
-    // GET: Get a specific record by ID
-    @GetMapping("/{id}")
-    public Record getRecordById(@PathVariable Long id) {
-        return recordService.getRecordById(id);
-    }
-
-    // GET: Search Spotify
+    // GET: Search Spotify (keep this above the generic /{id} mapping)
     @GetMapping("/spotify-search")
     public List<SpotifyTrackDTO> searchSpotifyTracks(@RequestParam String query) {
         return spotifyService.searchTracks(query);
     }
 
-    // POST: Add record from Spotify
+    // POST: Add record from Spotify (keep this above the generic /{id} mapping)
     @PostMapping("/spotify-add")
     public Record createRecordFromSpotify(@RequestParam String trackId) {
         SpotifyTrackDTO dto = spotifyService.getTrackById(trackId);
@@ -50,5 +38,17 @@ public class RecordController {
         // TODO: Add artist if needed later
 
         return recordService.createOrUpdateRecord(record);
+    }
+
+    // GET: List all records
+    @GetMapping
+    public List<Record> getAllRecords() {
+        return recordService.getAllRecords();
+    }
+
+    // GET: Get a specific record by ID — keep this LAST
+    @GetMapping("/{id}")
+    public Record getRecordById(@PathVariable Long id) {
+        return recordService.getRecordById(id);
     }
 }

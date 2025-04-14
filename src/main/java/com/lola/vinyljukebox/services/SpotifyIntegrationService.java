@@ -60,10 +60,33 @@ public class SpotifyIntegrationService {
     }
 
     public SpotifyTrackDTO getTrackById(String spotifyTrackId) {
-        // 1) Acquire token from Spotify
-        // 2) Perform GET /tracks/{spotifyTrackId}
-        // 3) Map JSON to SpotifyTrackDTO
-        return null;
+        String token = getAccessToken();
+        String url = SPOTIFY_API_BASE_URL + "/tracks/" + spotifyTrackId;
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            Map<String, Object> body = response.getBody();
+
+            SpotifyTrackDTO dto = new SpotifyTrackDTO();
+            dto.setId((String) body.get("id"));
+            dto.setName((String) body.get("name"));
+            dto.setPreviewUrl((String) body.get("preview_url"));
+
+            List<Map<String, Object>> artists = (List<Map<String, Object>>) body.get("artists");
+            if (artists != null && !artists.isEmpty()) {
+                dto.setArtistName((String) artists.get(0).get("name"));
+            }
+
+            return dto;
+        }
+
+        throw new RuntimeException("Spotify track not found: " + spotifyTrackId);
     }
 
     /**
@@ -92,4 +115,3 @@ public class SpotifyIntegrationService {
         throw new RuntimeException("Failed to fetch Spotify access token");
     }
 }
-
