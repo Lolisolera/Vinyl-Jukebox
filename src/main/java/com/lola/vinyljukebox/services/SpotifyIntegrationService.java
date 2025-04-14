@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@SuppressWarnings("unchecked")
 public class SpotifyIntegrationService {
 
     @Value("${spotify.client-id}")
@@ -52,6 +53,13 @@ public class SpotifyIntegrationService {
                     if (!artists.isEmpty()) {
                         dto.setArtistName((String) artists.get(0).get("name"));
                     }
+
+                    Map<String, Object> album = (Map<String, Object>) item.get("album");
+                    List<Map<String, Object>> images = (List<Map<String, Object>>) album.get("images");
+                    if (images != null && !images.isEmpty()) {
+                        dto.setCoverImageUrl((String) images.get(0).get("url"));
+                    }
+
                     results.add(dto);
                 }
             }
@@ -83,7 +91,7 @@ public class SpotifyIntegrationService {
                 Map<String, Object> artistInfo = artists.get(0);
                 dto.setArtistName((String) artistInfo.get("name"));
 
-                // Fetch artist details to get genres
+                // Get genre info
                 String artistId = (String) artistInfo.get("id");
                 String artistUrl = SPOTIFY_API_BASE_URL + "/artists/" + artistId;
 
@@ -94,15 +102,18 @@ public class SpotifyIntegrationService {
                 }
             }
 
+            Map<String, Object> album = (Map<String, Object>) body.get("album");
+            List<Map<String, Object>> images = (List<Map<String, Object>>) album.get("images");
+            if (images != null && !images.isEmpty()) {
+                dto.setCoverImageUrl((String) images.get(0).get("url"));
+            }
+
             return dto;
         }
 
         throw new RuntimeException("Spotify track not found: " + spotifyTrackId);
     }
 
-    /**
-     * Private helper method to fetch an access token from Spotify using Client Credentials Flow.
-     */
     private String getAccessToken() {
         String authEndpoint = "https://accounts.spotify.com/api/token";
 

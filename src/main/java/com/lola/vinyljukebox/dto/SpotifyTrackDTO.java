@@ -13,6 +13,13 @@ public class SpotifyTrackDTO {
     private String previewUrl;
     private String artistName;
     private List<String> genres; // holds genre names associated with the artist
+
+    public void setCoverImageUrl(String coverUrl) {
+    }
+
+    public String getCoverImageUrl() {
+        return "";
+    }
 }
 
 // This DTO (Data Transfer Object) is used to represent the simplified track information retrieved from the Spotify API,
