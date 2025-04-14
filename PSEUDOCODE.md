@@ -1,4 +1,4 @@
-# 🎛️ Vinyl-Jukebox – Full Stack Project Pseudocode (Updated with Spotify)
+# 🎛️ Vinyl-Jukebox – Full Stack Project Pseudocode 
 
 ## 1. **BACKEND (Spring Boot / Java)**
 
@@ -18,7 +18,7 @@
 - artist: Artist
 - genres: Set<Genre>
 - albumCover: AlbumCover
-- spotifyTrackId: String?   // (NEW) optional field, e.g. "3n3Ppam7vgaVa1iaRUc9Lp"
+- spotifyTrackId: String?   // e.g. "3n3Ppam7vgaVa1iaRUc9Lp"
 
 @Entity Artist
 - id: Long
@@ -44,12 +44,10 @@
 - dateAdded: Date
 ```
 
-> **Note**: We add `spotifyTrackId` to `Record` so we can reference tracks on Spotify without hosting audio ourselves.
-
----
+> **Note**: I add `spotifyTrackId` to `Record` so that I can reference tracks on Spotify without hosting audio myself.
+```
 
 ### 1.2 **Repositories**
-
 ```text
 UserRepository
 - findByUsername(String username): Optional<User>
@@ -70,11 +68,10 @@ RecordCollectionRepository
 - findByUser(User user): List<RecordCollection>
 ```
 
----
 
+ 
 ### 1.3 **Services**
 
-```text
 UserService
 - registerUser(UserDTO): User
 - authenticateUser(Credentials): Boolean
@@ -88,9 +85,6 @@ RecordService
 CollectionService
 - addToCollection(long userId, long recordId): RecordCollection
 - getUserCollection(long userId): List<RecordCollection>
-```
-
----
 
 ### 1.4 **Spotify Integration**
 

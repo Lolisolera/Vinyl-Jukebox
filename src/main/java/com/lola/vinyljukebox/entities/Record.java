@@ -41,5 +41,5 @@ public class Record {
     @Column(name = "spotify_track_id", unique = true)
     private String spotifyTrackId;
 
-    private String previewUrl; // ⭐️ NEW! URL to 30-second Spotify clip
+    private String previewUrl; // URL to 30-second Spotify clip
 }
