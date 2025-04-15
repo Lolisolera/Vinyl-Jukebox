@@ -1,0 +1,10 @@
+$background-color: #fef3c7;
+$text-color: #7c3aed;
+
+body {
+  background-color: $background-color;
+  font-family: 'Courier New', Courier, monospace;
+  color: $text-color;
+  margin: 0;
+  padding: 0;
+}
