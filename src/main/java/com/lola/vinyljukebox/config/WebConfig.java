@@ -14,11 +14,13 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
-                        .allowedMethods("*");
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*");
             }
         };
     }
 }
-//This file allows requests from your frontend React app (which runs at http://localhost:3000)
+
+//This file allows requests from your frontend React app (which runs at http://localhost:5173)
 //to access the backend API (http://localhost:8080), avoiding CORS (Cross-Origin Resource Sharing) errors in the browser.

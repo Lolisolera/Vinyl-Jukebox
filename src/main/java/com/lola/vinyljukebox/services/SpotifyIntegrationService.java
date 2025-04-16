@@ -1,4 +1,4 @@
-package com.lola.vinyljukebox.services;
+/*package com.lola.vinyljukebox.services;
 
 import com.lola.vinyljukebox.dto.SpotifyTrackDTO;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +47,11 @@ public class SpotifyIntegrationService {
                     SpotifyTrackDTO dto = new SpotifyTrackDTO();
                     dto.setId((String) item.get("id"));
                     dto.setName((String) item.get("name"));
-                    dto.setPreviewUrl((String) item.get("preview_url"));
+
+                    Object previewUrlObj = item.get("preview_url");
+                    if (previewUrlObj != null) {
+                        dto.setPreviewUrl(previewUrlObj.toString());
+                    }
 
                     List<Map<String, Object>> artists = (List<Map<String, Object>>) item.get("artists");
                     if (!artists.isEmpty()) {
@@ -66,6 +70,7 @@ public class SpotifyIntegrationService {
         }
         return results;
     }
+
     public SpotifyTrackDTO getTrackById(String spotifyTrackId) {
         String token = getAccessToken();
         String url = SPOTIFY_API_BASE_URL + "/tracks/" + spotifyTrackId;
@@ -81,17 +86,26 @@ public class SpotifyIntegrationService {
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
 
+                System.out.println("\n📦 Full Spotify track response:");
+                System.out.println(body);
+
                 SpotifyTrackDTO dto = new SpotifyTrackDTO();
                 dto.setId((String) body.get("id"));
                 dto.setName((String) body.get("name"));
-                dto.setPreviewUrl((String) body.get("preview_url"));
+
+                Object previewUrlObj = body.get("preview_url");
+                if (previewUrlObj != null) {
+                    dto.setPreviewUrl(previewUrlObj.toString());
+                    System.out.println("✅ Preview URL for track [" + dto.getName() + "]: " + dto.getPreviewUrl());
+                } else {
+                    System.out.println("⚠️ No preview URL for track [" + dto.getName() + "]");
+                }
 
                 List<Map<String, Object>> artists = (List<Map<String, Object>>) body.get("artists");
                 if (artists != null && !artists.isEmpty()) {
                     Map<String, Object> artistInfo = artists.get(0);
                     dto.setArtistName((String) artistInfo.get("name"));
 
-                    // Get genre info
                     String artistId = (String) artistInfo.get("id");
                     String artistUrl = SPOTIFY_API_BASE_URL + "/artists/" + artistId;
 
@@ -113,13 +127,11 @@ public class SpotifyIntegrationService {
 
         } catch (org.springframework.web.client.HttpClientErrorException.NotFound ex) {
             System.err.println("Spotify track not found: " + spotifyTrackId);
-            return null; // Gracefully return null if not found
+            return null;
         }
 
         throw new RuntimeException("Failed to fetch track from Spotify: " + spotifyTrackId);
     }
-
-
 
     private String getAccessToken() {
         String authEndpoint = "https://accounts.spotify.com/api/token";
@@ -144,3 +156,4 @@ public class SpotifyIntegrationService {
         throw new RuntimeException("Failed to fetch Spotify access token");
     }
 }
+*/

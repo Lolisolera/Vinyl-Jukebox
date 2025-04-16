@@ -10,7 +10,7 @@ const SearchAndImport = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:8080/api/records/spotify-search?query=${query}`);
+      const response = await axios.get(`http://localhost:8080/api/records/deezer-search?query=${query}`);
       setResults(response.data);
     } catch (err) {
       console.error('Search failed:', err);
@@ -19,28 +19,27 @@ const SearchAndImport = () => {
     }
   };
 
- const handleImport = async (trackId: string) => {
-   try {
-     const response = await axios.post(`/api/records/spotify-add`, null, {
-       params: { trackId },
-     });
+  const handleImport = async (trackId: string) => {
+    try {
+      const response = await axios.post(`/api/records/deezer-add`, null, {
+        params: { trackId },
+      });
 
-     if (response.status === 200) {
-       alert("✅ Track imported!");
-     } else {
-       console.error("⚠️ Backend returned non-200:", response);
-       alert("❌ Import failed. See console for details.");
-     }
-   } catch (error: any) {
-     console.error("❌ Import failed:", error.response?.data || error.message);
-     alert("❌ Import failed. The track may already exist or there's a problem with the connection.");
-   }
- };
-
+      if (response.status === 200) {
+        alert("✅ Track imported!");
+      } else {
+        console.error("⚠️ Backend returned non-200:", response);
+        alert("❌ Import failed. See console for details.");
+      }
+    } catch (error: any) {
+      console.error("❌ Import failed:", error.response?.data || error.message);
+      alert("❌ Import failed. The track may already exist or there's a problem with the connection.");
+    }
+  };
 
   return (
     <div style={{ marginBottom: '2rem' }}>
-      <h2>🎧 Search and Import from Spotify</h2>
+      <h2>🎧 Search and Import from Deezer</h2>
       <input
         type="text"
         value={query}
@@ -54,7 +53,7 @@ const SearchAndImport = () => {
       <ul>
         {results.map((track: any) => (
           <li key={track.id} style={{ marginTop: '1rem' }}>
-            <strong>{track.name}</strong> by {track.artistName}
+            <strong>{track.title}</strong> by {track.artistName}
             <button style={{ marginLeft: '1rem' }} onClick={() => handleImport(track.id)}>Import</button>
           </li>
         ))}

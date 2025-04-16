@@ -1,8 +1,12 @@
-package com.lola.vinyljukebox.dto;
+/*package com.lola.vinyljukebox.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.Track;
+import se.michaelthelin.spotify.model_objects.specification.Image;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -14,8 +18,27 @@ public class SpotifyTrackDTO {
     private String artistName;
     private List<String> genres;
     private String coverImageUrl;
+
+    // No-args constructor added so you can call new SpotifyTrackDTO()
+    public SpotifyTrackDTO() {
+    }
+
+    public SpotifyTrackDTO(Track track) {
+        this.id = track.getId();
+        this.name = track.getName();
+        this.previewUrl = track.getPreviewUrl();
+
+        ArtistSimplified[] artists = track.getArtists();
+        this.artistName = (artists.length > 0) ? artists[0].getName() : "Unknown";
+
+        this.genres = new ArrayList<>();
+
+        Image[] images = track.getAlbum().getImages();
+        this.coverImageUrl = (images.length > 0) ? images[0].getUrl() : null;
+    }
 }
 
+*/
 
 
 // This DTO (Data Transfer Object) is used to represent the simplified track information retrieved from the Spotify API,

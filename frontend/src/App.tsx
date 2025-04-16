@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <h1>🎵 Vinyl Jukebox</h1>
 
-      {/* NEW: Spotify Search and Import Feature */}
+      {/* NEW: Deezer Search and Import Feature */}
       <SearchAndImport />
 
       {/* Existing: List of all records */}

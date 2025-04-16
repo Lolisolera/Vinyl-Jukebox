@@ -1,60 +1,66 @@
 package com.lola.vinyljukebox.controllers;
 
-import com.lola.vinyljukebox.dto.SpotifyTrackDTO;
+import com.lola.vinyljukebox.dto.RecordDTO;
+import com.lola.vinyljukebox.dto.DeezerTrackDTO;
 import com.lola.vinyljukebox.entities.Record;
 import com.lola.vinyljukebox.services.RecordService;
-import com.lola.vinyljukebox.services.SpotifyIntegrationService;
+import com.lola.vinyljukebox.services.DeezerIntegrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/records")
+@CrossOrigin(origins = "http://localhost:5173")
 public class RecordController {
 
     private final RecordService recordService;
-    private final SpotifyIntegrationService spotifyService;
+    private final DeezerIntegrationService deezerService;
 
     public RecordController(
             RecordService recordService,
-            SpotifyIntegrationService spotifyService
+            DeezerIntegrationService deezerService
     ) {
         this.recordService = recordService;
-        this.spotifyService = spotifyService;
+        this.deezerService = deezerService;
     }
 
-    // GET: Search Spotify
-    @GetMapping("/spotify-search")
-    public List<SpotifyTrackDTO> searchSpotifyTracks(@RequestParam String query) {
-        return spotifyService.searchTracks(query);
+    //  GET: Search Deezer
+    @GetMapping("/deezer-search")
+    public List<DeezerTrackDTO> searchDeezerTracks(@RequestParam String query) {
+        return deezerService.searchTracks(query);
     }
 
-    // POST: Add record from Spotify
-    @PostMapping("/spotify-add")
-    public ResponseEntity<?> createRecordFromSpotify(@RequestParam String trackId) {
+    // POST: Add record from Deezer
+    @PostMapping("/deezer-add")
+    public ResponseEntity<?> createRecordFromDeezer(@RequestParam String trackId) {
         try {
-            SpotifyTrackDTO dto = spotifyService.getTrackById(trackId);
-            Record record = recordService.createRecordFromSpotifyDTO(dto);
+            DeezerTrackDTO dto = deezerService.getTrackById(trackId);
+            Record record = recordService.createRecordFromDeezerDTO(dto);
             return ResponseEntity.ok(record);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Spotify track not found for ID: " + trackId);
+                    .body("Deezer track not found for ID: " + trackId);
         }
     }
 
     // GET: List all records
     @GetMapping
-    public List<Record> getAllRecords() {
-        return recordService.getAllRecords();
+    public ResponseEntity<List<RecordDTO>> getAllRecords() {
+        List<Record> records = recordService.getAllRecords();
+        List<RecordDTO> dtoList = records.stream()
+                .map(RecordDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtoList);
     }
 
-    // GET: Get a specific record by ID
+    // GET: Specific record by ID
     @GetMapping("/{id}")
-    public Record getRecordById(@PathVariable Long id) {
-        return recordService.getRecordById(id);
+    public ResponseEntity<RecordDTO> getRecordById(@PathVariable Long id) {
+        Record record = recordService.getRecordById(id);
+        return ResponseEntity.ok(new RecordDTO(record));
     }
-
-
 }

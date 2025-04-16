@@ -42,10 +42,12 @@ public class Record {
     @JsonBackReference // Prevent infinite loop on AlbumCover -> Record -> AlbumCover...
     private AlbumCover albumCover;
 
-    @Column(name = "spotify_track_id", unique = true)
-    private String spotifyTrackId;
+    @Column(name = "deezer_track_id", unique = true, length = 512)
+    private String deezerTrackId;
 
+    @Column(length = 1024)
     private String previewUrl;
+
 
     // Optional helper method to set both sides of the relationship
     public void setAlbumCover(AlbumCover albumCover) {

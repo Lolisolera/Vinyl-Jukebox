@@ -1,6 +1,6 @@
 package com.lola.vinyljukebox.services;
 
-import com.lola.vinyljukebox.dto.SpotifyTrackDTO;
+import com.lola.vinyljukebox.dto.DeezerTrackDTO;
 import com.lola.vinyljukebox.entities.AlbumCover;
 import com.lola.vinyljukebox.entities.Artist;
 import com.lola.vinyljukebox.entities.Genre;
@@ -37,24 +37,26 @@ public class RecordService {
     }
 
     public Record createOrUpdateRecord(Record record) {
-        if (record.getSpotifyTrackId() != null) {
-            Optional<Record> existing = recordRepository.findBySpotifyTrackId(record.getSpotifyTrackId());
+        if (record.getDeezerTrackId() != null) {
+            Optional<Record> existing = recordRepository.findByDeezerTrackId(record.getDeezerTrackId());
             if (existing.isPresent()) {
                 Record existingRec = existing.get();
                 existingRec.setTitle(record.getTitle());
                 existingRec.setArtist(record.getArtist());
-                existingRec.setPreviewUrl(record.getPreviewUrl());
+
+                if (record.getPreviewUrl() != null && !record.getPreviewUrl().isEmpty()) {
+                    existingRec.setPreviewUrl(record.getPreviewUrl());
+                }
+
                 existingRec.setGenres(record.getGenres());
 
                 AlbumCover incomingCover = record.getAlbumCover();
                 if (incomingCover != null) {
                     AlbumCover existingCover = existingRec.getAlbumCover();
                     if (existingCover == null) {
-                        // New cover for existing record
                         incomingCover.setRecord(existingRec);
                         existingRec.setAlbumCover(incomingCover);
                     } else {
-                        // Just update image URL
                         existingCover.setImageUrl(incomingCover.getImageUrl());
                     }
                 }
@@ -63,7 +65,6 @@ public class RecordService {
             }
         }
 
-        // New record path
         if (record.getAlbumCover() != null) {
             record.getAlbumCover().setRecord(record);
         }
@@ -71,18 +72,16 @@ public class RecordService {
         return recordRepository.save(record);
     }
 
-    public Record createRecordFromSpotifyDTO(SpotifyTrackDTO dto) {
-        // Find or create Artist
+    public Record createRecordFromDeezerDTO(DeezerTrackDTO dto) {
         Artist artist = artistRepository.findByName(dto.getArtistName())
                 .orElseGet(() -> {
                     Artist newArtist = new Artist();
                     newArtist.setName(dto.getArtistName());
-                    newArtist.setBio("Imported from Spotify");
+                    newArtist.setBio("Imported from Deezer");
                     newArtist.setCountry("Unknown");
                     return artistRepository.save(newArtist);
                 });
 
-        // Map genres
         Set<Genre> genreSet = new HashSet<>();
         if (dto.getGenres() != null) {
             for (String genreName : dto.getGenres()) {
@@ -92,24 +91,26 @@ public class RecordService {
             }
         }
 
-        // Create or update record
-        Record record = recordRepository.findBySpotifyTrackId(dto.getId()).orElse(new Record());
-        record.setTitle(dto.getName());
-        record.setSpotifyTrackId(dto.getId());
-        record.setPreviewUrl(dto.getPreviewUrl());
+        Record record = recordRepository.findByDeezerTrackId(dto.getId()).orElse(new Record());
+        record.setTitle(dto.getTitle());
+        record.setDeezerTrackId(dto.getId());
+
+        if (dto.getPreviewUrl() != null && !dto.getPreviewUrl().isEmpty()) {
+            record.setPreviewUrl(dto.getPreviewUrl());
+        }
+
         record.setArtist(artist);
         record.setGenres(genreSet);
 
-        // Handle album cover
-        if (dto.getCoverImageUrl() != null && !dto.getCoverImageUrl().isEmpty()) {
+        if (dto.getAlbumCoverUrl() != null && !dto.getAlbumCoverUrl().isEmpty()) {
             AlbumCover cover = record.getAlbumCover();
             if (cover == null) {
                 cover = new AlbumCover();
-                cover.setImageUrl(dto.getCoverImageUrl());
+                cover.setImageUrl(dto.getAlbumCoverUrl());
                 cover.setRecord(record);
                 record.setAlbumCover(cover);
             } else {
-                cover.setImageUrl(dto.getCoverImageUrl());
+                cover.setImageUrl(dto.getAlbumCoverUrl());
             }
         }
 

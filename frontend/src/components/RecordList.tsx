@@ -54,12 +54,16 @@ const RecordList = () => {
           <p><strong>Genres:</strong> {record.genres && record.genres.length > 0 ? record.genres.join(', ') : 'N/A'}</p>
 
           {record.albumCoverUrl && (
-            <img src={record.albumCoverUrl} alt="Album cover" width="200" />
+            <img src={record.albumCoverUrl} alt={`Cover for ${record.title}`} width="200" />
           )}
+
           {record.previewUrl ? (
-            <audio controls src={record.previewUrl}></audio>
+            <audio controls>
+              <source src={record.previewUrl} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
           ) : (
-            <p><em>No preview available</em></p>
+            <p className="no-audio"><em>No preview available</em></p>
           )}
         </div>
       ))}

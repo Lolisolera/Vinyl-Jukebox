@@ -5,14 +5,10 @@ export interface Record {
   id: number;
   title: string;
   previewUrl: string | null;
-  spotifyTrackId: string;
-  artist: {
-    name: string;
-  };
-  genres: { name: string }[];
-  albumCover?: {
-    imageUrl: string;
-  };
+  deezerTrackId: string;
+  artistName: string;
+  genres: string[];
+  albumCoverUrl?: string;
 }
 
 // GET all records
@@ -21,9 +17,9 @@ export const fetchRecords = async (): Promise<Record[]> => {
   return response.data;
 };
 
-// POST: Add record from Spotify
-export const addRecordFromSpotify = async (trackId: string): Promise<Record> => {
-  const response = await axios.post<Record>(`/records/spotify-add`, null, {
+// POST: Add record from Deezer
+export const addRecordFromDeezer = async (trackId: string): Promise<Record> => {
+  const response = await axios.post<Record>(`/records/deezer-add`, null, {
     params: { trackId },
   });
   return response.data;
