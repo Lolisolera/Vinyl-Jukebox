@@ -11,13 +11,13 @@ export interface Record {
   albumCoverUrl?: string;
 }
 
-// GET all records
-export const fetchRecords = async (): Promise<Record[]> => {
+//  GET all records
+export const getAllRecords = async (): Promise<Record[]> => {
   const response = await axios.get<Record[]>('/records');
   return response.data;
 };
 
-// POST: Add record from Deezer
+//  POST: Add record from Deezer
 export const addRecordFromDeezer = async (trackId: string): Promise<Record> => {
   const response = await axios.post<Record>(`/records/deezer-add`, null, {
     params: { trackId },
@@ -25,13 +25,16 @@ export const addRecordFromDeezer = async (trackId: string): Promise<Record> => {
   return response.data;
 };
 
-// DELETE: Delete a record
+//  DELETE a record
 export const deleteRecord = async (id: number): Promise<void> => {
   await axios.delete(`/records/${id}`);
 };
 
-// PUT: Update a record (optional)
-export const updateRecord = async (id: number, updatedRecord: Partial<Record>): Promise<Record> => {
+// PUT: Update a record
+export const updateRecord = async (
+  id: number,
+  updatedRecord: Partial<Record>
+): Promise<Record> => {
   const response = await axios.put<Record>(`/records/${id}`, updatedRecord);
   return response.data;
 };

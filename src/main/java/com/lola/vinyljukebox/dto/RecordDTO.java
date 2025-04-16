@@ -5,10 +5,12 @@ import com.lola.vinyljukebox.entities.Artist;
 import com.lola.vinyljukebox.entities.Genre;
 import com.lola.vinyljukebox.entities.Record;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RecordDTO {
+
     private Long id;
     private String title;
     private String previewUrl;
@@ -26,15 +28,15 @@ public class RecordDTO {
         Artist artist = record.getArtist();
         this.artistName = (artist != null) ? artist.getName() : "Unknown";
 
-        this.genres = record.getGenres()
-                .stream()
-                .map(Genre::getName)
-                .collect(Collectors.toList());
+        this.genres = (record.getGenres() != null)
+                ? record.getGenres().stream().map(Genre::getName).collect(Collectors.toList())
+                : Collections.emptyList();
 
         AlbumCover cover = record.getAlbumCover();
         this.albumCoverUrl = (cover != null) ? cover.getImageUrl() : null;
     }
 
+    // Getters
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getPreviewUrl() { return previewUrl; }

@@ -12,12 +12,12 @@ const RecordList = () => {
     const loadRecords = async () => {
       try {
         const data = await fetchRecords();
-        console.log('📦 Response from backend:', data);
+        console.log('Response from backend:', data);
 
         if (Array.isArray(data)) {
           setRecords(data);
         } else {
-          console.error('❌ Unexpected format:', data);
+          console.error(' Unexpected format:', data);
           throw new Error('Unexpected data format received.');
         }
       } catch (error) {

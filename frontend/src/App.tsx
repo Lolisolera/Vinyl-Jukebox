@@ -1,19 +1,26 @@
 import './App.scss';
-import { useState } from 'react';
-
-import RecordList from './components/RecordList';
+import { useEffect, useState } from 'react';
+import { getAllRecords, Record } from './services/recordService';
 import SearchAndImport from './components/SearchAndImport';
+import VinylCarousel from './components/VinylCarousel';
 
 function App() {
+  const [records, setRecords] = useState<Record[]>([]);
+
+  useEffect(() => {
+    getAllRecords().then(setRecords);
+  }, []);
+
   return (
     <div className="App">
       <h1>🎵 Vinyl Jukebox</h1>
 
-      {/* NEW: Deezer Search and Import Feature */}
+      {/* Search and Import */}
       <SearchAndImport />
 
-      {/* Existing: List of all records */}
-      <RecordList />
+      {/* Featured Carousel */}
+      <h2>🎶 Featured Records</h2>
+      <VinylCarousel records={records} />
     </div>
   );
 }

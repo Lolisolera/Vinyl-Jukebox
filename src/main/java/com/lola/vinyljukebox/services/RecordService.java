@@ -102,6 +102,7 @@ public class RecordService {
         record.setArtist(artist);
         record.setGenres(genreSet);
 
+        // ✅ Enhanced album cover setting logic
         if (dto.getAlbumCoverUrl() != null && !dto.getAlbumCoverUrl().isEmpty()) {
             AlbumCover cover = record.getAlbumCover();
             if (cover == null) {
@@ -112,6 +113,8 @@ public class RecordService {
             } else {
                 cover.setImageUrl(dto.getAlbumCoverUrl());
             }
+        } else {
+            System.out.println("⚠️ Missing album cover URL for: " + dto.getTitle());
         }
 
         return createOrUpdateRecord(record);
