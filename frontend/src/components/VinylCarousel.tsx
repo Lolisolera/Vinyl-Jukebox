@@ -11,6 +11,7 @@ interface Props {
 const VinylCarousel = ({ records, onDelete }: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(null);
+  const [likedRecords, setLikedRecords] = useState<number[]>([]);
 
   const handleDelete = async (id: number) => {
     const confirm = window.confirm('Are you sure you want to delete this track?');
@@ -30,12 +31,10 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
     if (!record.previewUrl) return;
 
     if (audioRef.current && currentlyPlayingId === record.id) {
-      // Pause if it's the same track
       audioRef.current.pause();
       audioRef.current = null;
       setCurrentlyPlayingId(null);
     } else {
-      // Stop current track if another is playing
       if (audioRef.current) {
         audioRef.current.pause();
       }
@@ -45,12 +44,17 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
       audioRef.current = newAudio;
       setCurrentlyPlayingId(record.id);
 
-      // Cleanup when track ends
       newAudio.addEventListener('ended', () => {
         setCurrentlyPlayingId(null);
         audioRef.current = null;
       });
     }
+  };
+
+  const handleLike = (id: number) => {
+    setLikedRecords((prev) =>
+      prev.includes(id) ? prev.filter((likedId) => likedId !== id) : [...prev, id]
+    );
   };
 
   const settings = {
@@ -69,6 +73,7 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
         {records.map((record) => {
           const imageUrl = record.albumCover?.imageUrl || record.albumCoverUrl || '/default-cover.jpg';
           const artistName = record.artist?.name || record.artistName || 'Unknown Artist';
+          const isLiked = likedRecords.includes(record.id);
 
           return (
             <div key={record.id} className="record-slide">
@@ -92,6 +97,14 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
                     {currentlyPlayingId === record.id ? '⏸️' : '▶️'}
                   </button>
                 )}
+
+                <button
+                  className={`overlay-button like-button ${isLiked ? 'liked' : ''}`}
+                  onClick={() => handleLike(record.id)}
+                  title={isLiked ? 'Unlike' : 'Like'}
+                >
+                  {isLiked ? '❤️' : '🤍'}
+                </button>
               </div>
 
               <h4>{record.title}</h4>
