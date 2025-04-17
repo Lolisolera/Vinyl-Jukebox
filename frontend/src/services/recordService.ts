@@ -1,23 +1,33 @@
-// src/services/recordService.ts
 import axios from '../api';
+
+// Match backend DTO or full entity shape
+export interface Artist {
+  name: string;
+}
+
+export interface AlbumCover {
+  imageUrl: string;
+}
 
 export interface Record {
   id: number;
   title: string;
   previewUrl: string | null;
   deezerTrackId: string;
-  artistName: string;
+  artistName?: string;
+  artist?: Artist | null;
   genres: string[];
-  albumCoverUrl?: string;
+  albumCoverUrl?: string | null;
+  albumCover?: AlbumCover | null;
 }
 
-//  GET all records
+// GET all records
 export const getAllRecords = async (): Promise<Record[]> => {
   const response = await axios.get<Record[]>('/records');
   return response.data;
 };
 
-//  POST: Add record from Deezer
+// POST: Add record from Deezer
 export const addRecordFromDeezer = async (trackId: string): Promise<Record> => {
   const response = await axios.post<Record>(`/records/deezer-add`, null, {
     params: { trackId },
@@ -25,7 +35,7 @@ export const addRecordFromDeezer = async (trackId: string): Promise<Record> => {
   return response.data;
 };
 
-//  DELETE a record
+// DELETE a record
 export const deleteRecord = async (id: number): Promise<void> => {
   await axios.delete(`/records/${id}`);
 };

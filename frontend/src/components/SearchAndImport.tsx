@@ -8,6 +8,8 @@ const SearchAndImport = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
+    if (!query.trim()) return;
+
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:8080/api/records/deezer-search?query=${query}`);
@@ -26,20 +28,19 @@ const SearchAndImport = () => {
       });
 
       if (response.status === 200) {
-        alert("✅ Track imported!");
+        alert('✅ Track imported!');
       } else {
-        console.error("⚠️ Backend returned non-200:", response);
-        alert("❌ Import failed. See console for details.");
+        alert('❌ Import failed.');
       }
     } catch (error: any) {
-      console.error("❌ Import failed:", error.response?.data || error.message);
-      alert("❌ Import failed. The track may already exist or there's a problem with the connection.");
+      console.error('❌ Import failed:', error.response?.data || error.message);
+      alert('❌ Import failed. The track may already exist.');
     }
   };
 
   return (
-    <div style={{ marginBottom: '2rem' }}>
-      <h2>🎧 Search and Import from Deezer</h2>
+    <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+      <h2>🔎 Search and Import from Deezer</h2>
       <input
         type="text"
         value={query}
@@ -50,11 +51,13 @@ const SearchAndImport = () => {
       <button onClick={handleSearch}>Search</button>
 
       {loading && <p>Loading...</p>}
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {results.map((track: any) => (
           <li key={track.id} style={{ marginTop: '1rem' }}>
             <strong>{track.title}</strong> by {track.artistName}
-            <button style={{ marginLeft: '1rem' }} onClick={() => handleImport(track.id)}>Import</button>
+            <button style={{ marginLeft: '1rem' }} onClick={() => handleImport(track.id)}>
+              Import
+            </button>
           </li>
         ))}
       </ul>

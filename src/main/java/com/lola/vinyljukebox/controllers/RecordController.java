@@ -28,7 +28,7 @@ public class RecordController {
         this.deezerService = deezerService;
     }
 
-    //  GET: Search Deezer
+    // GET: Search Deezer
     @GetMapping("/deezer-search")
     public List<DeezerTrackDTO> searchDeezerTracks(@RequestParam String query) {
         return deezerService.searchTracks(query);
@@ -61,6 +61,21 @@ public class RecordController {
     @GetMapping("/{id}")
     public ResponseEntity<RecordDTO> getRecordById(@PathVariable Long id) {
         Record record = recordService.getRecordById(id);
+        if (record == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(new RecordDTO(record));
+    }
+
+    // DELETE: Specific record by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRecord(@PathVariable Long id) {
+        Record record = recordService.getRecordById(id);
+        if (record == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Record not found for ID: " + id);
+        }
+        recordService.deleteRecord(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 }

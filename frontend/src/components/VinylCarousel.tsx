@@ -1,13 +1,13 @@
-// VinylCarousel.tsx
 import Slider from 'react-slick';
-import { Record } from '../services/recordService';
+import { Record, deleteRecord } from '../services/recordService';
 import './VinylCarousel.scss';
 
 interface Props {
   records: Record[];
+  onDelete: (id: number) => void;
 }
 
-const VinylCarousel = ({ records }: Props) => {
+const VinylCarousel = ({ records, onDelete }: Props) => {
   const settings = {
     dots: true,
     infinite: true,
@@ -18,29 +18,60 @@ const VinylCarousel = ({ records }: Props) => {
     centerPadding: '40px',
   };
 
+  const handleDelete = async (id: number) => {
+    const confirm = window.confirm('Are you sure you want to delete this track?');
+    if (confirm) {
+      await deleteRecord(id);
+      onDelete(id);
+    }
+  };
+
+  const handlePlay = (previewUrl: string) => {
+    const audio = new Audio(previewUrl);
+    audio.play();
+  };
+
   return (
     <div className="vinyl-carousel">
       <Slider {...settings}>
-        {records.map((record) => (
-          <div key={record.id} className="record-slide">
-            <img
-              src={record.albumCoverUrl || '/default-cover.jpg'}
-              alt={`Cover of ${record.title}`}
-              style={{
-                width: '250px',
-                height: '250px',
-                objectFit: 'cover',
-                borderRadius: '12px',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-              }}
-            />
-            <h4>{record.title}</h4>
-            <p>{record.artistName || 'Unknown Artist'}</p>
-            {record.previewUrl && (
-              <audio controls src={record.previewUrl} />
-            )}
-          </div>
-        ))}
+        {records.map((record) => {
+          const imageUrl = record.albumCover?.imageUrl || record.albumCoverUrl || '/default-cover.jpg';
+          const artistName = record.artist?.name || record.artistName || 'Unknown Artist';
+
+          return (
+            <div key={record.id} className="record-slide">
+              <div className="image-wrapper">
+                <img src={imageUrl} alt={record.title} />
+
+                <button
+                  className="overlay-button delete-button"
+                  onClick={() => handleDelete(record.id)}
+                  title="Delete"
+                >
+                  🗑️
+                </button>
+
+                {record.previewUrl && (
+                  <button
+                    className="overlay-button play-button"
+                    onClick={() => handlePlay(record.previewUrl)}
+                    title="Play"
+                  >
+                    ▶️
+                  </button>
+                )}
+              </div>
+
+              <h4>{record.title}</h4>
+              <p>{artistName}</p>
+
+              {/* Optional hidden audio */}
+              {record.previewUrl && (
+                <audio controls src={record.previewUrl} style={{ display: 'none' }} />
+              )}
+            </div>
+          );
+        })}
       </Slider>
     </div>
   );

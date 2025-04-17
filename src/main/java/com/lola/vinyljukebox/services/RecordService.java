@@ -102,7 +102,6 @@ public class RecordService {
         record.setArtist(artist);
         record.setGenres(genreSet);
 
-        // ✅ Enhanced album cover setting logic
         if (dto.getAlbumCoverUrl() != null && !dto.getAlbumCoverUrl().isEmpty()) {
             AlbumCover cover = record.getAlbumCover();
             if (cover == null) {
@@ -118,5 +117,25 @@ public class RecordService {
         }
 
         return createOrUpdateRecord(record);
+    }
+
+    public void deleteRecord(Long id) {
+        Optional<Record> recordOpt = recordRepository.findById(id);
+        if (recordOpt.isPresent()) {
+            Record record = recordOpt.get();
+
+            // Break relationships
+            if (record.getAlbumCover() != null) {
+                record.setAlbumCover(null);
+            }
+
+            if (record.getGenres() != null) {
+                record.getGenres().clear(); // Clear join table
+            }
+
+            recordRepository.save(record); // Update to break links
+
+            recordRepository.deleteById(id);
+        }
     }
 }

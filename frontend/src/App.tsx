@@ -1,28 +1,37 @@
-import './App.scss';
+// App.tsx
 import { useEffect, useState } from 'react';
 import { getAllRecords, Record } from './services/recordService';
-import SearchAndImport from './components/SearchAndImport';
 import VinylCarousel from './components/VinylCarousel';
+import SearchAndImport from './components/SearchAndImport';
+import './App.scss';
 
-function App() {
+const App = () => {
   const [records, setRecords] = useState<Record[]>([]);
 
+  const fetchRecords = async () => {
+    const data = await getAllRecords();
+    setRecords(data);
+  };
+
   useEffect(() => {
-    getAllRecords().then(setRecords);
+    fetchRecords();
   }, []);
 
-  return (
-    <div className="App">
-      <h1>🎵 Vinyl Jukebox</h1>
+  const handleDelete = (id: number) => {
+    setRecords((prev) => prev.filter(record => record.id !== id));
+  };
 
-      {/* Search and Import */}
+  return (
+    <div className="app-container">
+      <h1>🎶 Vinyl Jukebox</h1>
+
+      {/* 🔍 Search bar */}
       <SearchAndImport />
 
-      {/* Featured Carousel */}
-      <h2>🎶 Featured Records</h2>
-      <VinylCarousel records={records} />
+      {/* 💿 Carousel of records */}
+      <VinylCarousel records={records} onDelete={handleDelete} />
     </div>
   );
-}
+};
 
 export default App;
