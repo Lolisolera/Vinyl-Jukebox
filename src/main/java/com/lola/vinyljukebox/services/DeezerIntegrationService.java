@@ -47,11 +47,17 @@ public class DeezerIntegrationService {
                 List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("data");
 
                 for (Map<String, Object> item : items) {
-                    DeezerTrackDTO dto = new DeezerTrackDTO();
+                    String previewUrl = (String) item.get("preview");
 
+                    // ✅ Skip tracks with missing or empty previews
+                    if (previewUrl == null || previewUrl.isEmpty()) {
+                        continue;
+                    }
+
+                    DeezerTrackDTO dto = new DeezerTrackDTO();
                     dto.setId(String.valueOf(item.get("id")));
                     dto.setTitle((String) item.get("title"));
-                    dto.setPreviewUrl((String) item.get("preview"));
+                    dto.setPreviewUrl(previewUrl);
 
                     Map<String, Object> artistMap = (Map<String, Object>) item.get("artist");
                     dto.setArtistName((String) artistMap.get("name"));

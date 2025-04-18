@@ -1,4 +1,3 @@
-// src/components/SearchAndImport.tsx
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -13,6 +12,7 @@ const SearchAndImport = () => {
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:8080/api/records/deezer-search?query=${query}`);
+      console.log("🎧 Deezer search results:", response.data); // Debug previewUrl
       setResults(response.data);
     } catch (err) {
       console.error('Search failed:', err);
@@ -41,6 +41,7 @@ const SearchAndImport = () => {
   return (
     <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
       <h2>🔎 Search and Import from Deezer</h2>
+
       <input
         type="text"
         value={query}
@@ -51,15 +52,44 @@ const SearchAndImport = () => {
       <button onClick={handleSearch}>Search</button>
 
       {loading && <p>Loading...</p>}
+
+      {!loading && query && results.length === 0 && (
+        <p style={{ color: 'gray', fontStyle: 'italic', marginTop: '1rem' }}>
+          😢 Sorry, no tracks found for "<strong>{query}</strong>".
+        </p>
+      )}
+
       <ul style={{ listStyle: 'none', padding: 0 }}>
-        {results.map((track: any) => (
-          <li key={track.id} style={{ marginTop: '1rem' }}>
-            <strong>{track.title}</strong> by {track.artistName}
-            <button style={{ marginLeft: '1rem' }} onClick={() => handleImport(track.id)}>
-              Import
-            </button>
-          </li>
-        ))}
+        {results.map((track: any) => {
+          const isPlayable = track.previewUrl && track.previewUrl.endsWith('.mp3');
+          console.log(`▶️ Track: ${track.title}, Preview URL:`, track.previewUrl);
+
+          return (
+            <li key={track.id} style={{ marginTop: '1.5rem' }}>
+              <strong>{track.title}</strong> by {track.artistName}
+
+              {isPlayable ? (
+                <div style={{ marginTop: '0.5rem' }}>
+                  <audio controls>
+                    <source src={track.previewUrl} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              ) : (
+                <p style={{ fontStyle: 'italic', color: '#999' }}>No preview available</p>
+              )}
+
+              <div>
+                <button
+                  style={{ marginTop: '0.5rem', padding: '0.4rem 0.8rem', cursor: 'pointer' }}
+                  onClick={() => handleImport(track.id)}
+                >
+                  Import
+                </button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
