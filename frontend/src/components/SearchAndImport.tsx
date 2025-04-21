@@ -40,7 +40,6 @@ const SearchAndImport = () => {
 
   return (
     <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-      <h2>🔎 Search and Import from Deezer</h2>
 
       <input
         type="text"

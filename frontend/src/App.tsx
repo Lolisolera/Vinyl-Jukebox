@@ -1,8 +1,7 @@
-// App.tsx
 import { useEffect, useState } from 'react';
 import { getAllRecords, Record } from './services/recordService';
 import VinylCarousel from './components/VinylCarousel';
-import SearchAndImport from './components/SearchAndImport';
+import JukeboxFrame from './components/JukeboxFrame';
 import './App.scss';
 
 const App = () => {
@@ -23,13 +22,9 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <h1>🎶 Vinyl Jukebox</h1>
-
-      {/* 🔍 Search bar */}
-      <SearchAndImport />
-
-      {/* 💿 Carousel of records */}
-      <VinylCarousel records={records} onDelete={handleDelete} />
+      <JukeboxFrame>
+        <VinylCarousel records={records} onDelete={handleDelete} />
+      </JukeboxFrame>
     </div>
   );
 };
