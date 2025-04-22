@@ -22,13 +22,46 @@
 }
 
 .jukebox-arch {
-  height: 40px;
+  height: 60px;
   background: linear-gradient(to bottom, #6a0dad, #ff0000);
   border-top-left-radius: 60px;
   border-top-right-radius: 60px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 1rem;
+
+  .coin-slot {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.1rem;
+    font-family: 'Courier New', Courier, monospace;
+
+    img {
+      height: 55px;
+      width: auto;
+
+      @include respond-to('mobile') {
+        height: 48px;
+      }
+    }
+
+    span {
+      color: #ffcc00;
+      font-weight: bold;
+      text-shadow: 1px 1px #000;
+      text-transform: uppercase;
+
+      @include respond-to('mobile') {
+        font-size: 0.9rem;
+      }
+    }
+  }
 
   @include respond-to('mobile') {
-    height: 30px;
+    height: 50px;
+    padding-right: 0.5rem;
   }
 }
 
@@ -41,14 +74,9 @@
 
   .jukebox-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-
-    @include respond-to('mobile') {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
 
     .jukebox-title {
       text-align: center;
@@ -67,40 +95,12 @@
         font-size: 1.6rem;
       }
     }
-
-    .coin-slot {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 1rem;
-      font-family: 'Courier New', Courier, monospace;
-
-      img {
-        height: 64px;
-        width: auto;
-
-        @include respond-to('mobile') {
-          height: 40px;
-        }
-      }
-
-      span {
-        color: #ffcc00;
-        font-weight: bold;
-        text-shadow: 1px 1px #000;
-        text-transform: uppercase;
-
-        @include respond-to('mobile') {
-          font-size: 0.8rem;
-        }
-      }
-    }
   }
 }
 
 .jukebox-search {
   background: #3b0a67;
-  padding: 0.8rem 1.5rem;
+  padding: 0.5rem 1.2rem;
   text-align: center;
   color: #fff;
 
