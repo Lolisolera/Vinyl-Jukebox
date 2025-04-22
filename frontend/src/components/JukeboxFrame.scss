@@ -1,41 +1,84 @@
 .jukebox-frame {
   max-width: 1200px;
-  margin: 0 auto 1rem auto; // Less vertical margin
-  background: #8b0000;
+  margin: 0 auto 1rem auto;
+  margin-top: 0.5rem;
+  background: #0a0a3c;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 0 30px #ffcc00;
-  border: 5px solid #222;
+  box-shadow: 0 0 40px #ff00cc;
+  border: 5px solid #320041;
 }
 
 .jukebox-arch {
-  height: 40px; // 🔽 Reduced further
-  background: linear-gradient(to bottom, #f7c600, #ff0000);
+  height: 40px;
+  background: linear-gradient(to bottom, #6a0dad, #ff0000);
   border-top-left-radius: 60px;
   border-top-right-radius: 60px;
 }
 
 .jukebox-logo {
-  background: #f7c600;
-  text-align: center;
-  font-family: 'Rock Salt', cursive;
+  background: #4b0082;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 2rem;
-  padding: 0.5rem; // 🔽 smaller height
-  color: #222;
+  padding: 0.5rem 1rem;
+  color: #fff;
   border-top: 3px solid #000;
   border-bottom: 3px solid #000;
+  position: relative;
+
+  .jukebox-title {
+    text-align: center;
+    flex-grow: 1;
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 2.6rem;
+    color: #ffcc00;
+    text-shadow: 2px 2px #000, 4px 4px #ff00ff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .coin-slot {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-family: 'Courier New', Courier, monospace;
+
+    img {
+      height: 64px;
+      width: auto;
+    }
+
+    span {
+      color: #ffcc00;
+      font-weight: bold;
+      text-shadow: 1px 1px #000;
+      text-transform: uppercase;
+    }
+  }
 }
 
 .jukebox-search {
-  background: #40a5a3;
-  padding: 0.8rem 1.5rem; // 🔽 more compact
+  background: #3b0a67;
+  padding: 0.8rem 1.5rem;
   text-align: center;
   color: #fff;
 
   h3 {
     margin-bottom: 0.5rem;
-    font-family: 'Rock Salt', cursive;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 1.2rem;
+    color: #ffcc00;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
+    text-transform: uppercase;
+    font-weight: bold;
   }
 
   input {
@@ -61,21 +104,21 @@
 }
 
 .jukebox-carousel {
-  padding: 0.8rem 1rem; // 🔽 tighter
-  background: #f8f4e3;
+  padding: 0.8rem 1rem;
+  background: #1a0033;
 }
 
 .jukebox-bottom {
-  background: #eee;
+  background: #222;
   text-align: center;
-  padding: 0.4rem; // 🔽 less space
-  border-top: 5px solid #222;
+  padding: 0.4rem;
+  border-top: 5px solid #660033;
   position: relative;
 }
 
 .jukebox-glow {
-  height: 6px; // 🔽 thinner glow
-  background: linear-gradient(to right, red, orange, yellow, green, blue, violet);
+  height: 6px;
+  background: linear-gradient(to right, violet, magenta, red, orange, yellow);
   filter: blur(3px);
   margin-bottom: 0.3rem;
 }
@@ -83,10 +126,12 @@
 .jukebox-badge {
   font-size: 1rem;
   font-weight: bold;
-  color: #d11f1f;
-  border: 2px dashed #d11f1f;
+  color: #ffcc00;
   padding: 0.4rem 0.9rem;
-  background: #fff8dc;
+  background: #1f002e;
   display: inline-block;
-  border-radius: 50%;
+  border-radius: 12px;
+  text-shadow: 1px 1px 0 #000;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0.5px;
 }
