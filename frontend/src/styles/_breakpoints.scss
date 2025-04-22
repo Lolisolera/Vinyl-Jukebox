@@ -1,0 +1,21 @@
+$breakpoints: (
+  'mobile': 480px,
+  'tablet': 768px,
+  'laptop': 1024px,
+  'desktop': 1200px
+);
+
+// ✅ Use map.get() instead of map-get()
+@use 'sass:map';
+
+@mixin respond-to($breakpoint) {
+  $size: map.get($breakpoints, $breakpoint);
+
+  @if $size {
+    @media (max-width: #{$size}) {
+      @content;
+    }
+  } @else {
+    @warn "🚨 Unknown breakpoint: #{$breakpoint}. Please use one of: #{map.keys($breakpoints)}.";
+  }
+}

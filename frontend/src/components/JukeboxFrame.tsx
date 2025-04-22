@@ -4,16 +4,17 @@ import SearchAndImport from './SearchAndImport';
 const JukeboxFrame = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="jukebox-frame" aria-label="Vinyl Jukebox container">
-      {/* 🧡 Top arch */}
+      {/* 🔸 Top Arch */}
       <div className="jukebox-arch" />
 
 
       <div className="jukebox-logo">
-        <div /> {/* Empty left spacer */}
-        <span className="jukebox-title">Vinyl Jukebox</span>
-        <div className="coin-slot">
-          <img src="/coin-slot.png" alt="Insert Coin" />
-          <span>Insert £1</span>
+        <div className="jukebox-header">
+          <span className="jukebox-title">Vinyl Jukebox</span>
+          <div className="coin-slot">
+            <img src="/coin-slot.png" alt="Insert Coin" />
+            <span>Insert £1</span>
+          </div>
         </div>
       </div>
 

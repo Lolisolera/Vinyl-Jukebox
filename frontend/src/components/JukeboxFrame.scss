@@ -1,3 +1,5 @@
+@use '../styles/breakpoints' as *;
+
 .jukebox-frame {
   max-width: 1200px;
   margin: 0 auto 1rem auto;
@@ -7,6 +9,16 @@
   overflow: hidden;
   box-shadow: 0 0 40px #ff00cc;
   border: 5px solid #320041;
+
+  @include respond-to('tablet') {
+    max-width: 90%;
+    border-radius: 16px;
+  }
+
+  @include respond-to('mobile') {
+    max-width: 95%;
+    border-radius: 12px;
+  }
 }
 
 .jukebox-arch {
@@ -14,52 +26,74 @@
   background: linear-gradient(to bottom, #6a0dad, #ff0000);
   border-top-left-radius: 60px;
   border-top-right-radius: 60px;
+
+  @include respond-to('mobile') {
+    height: 30px;
+  }
 }
 
 .jukebox-logo {
   background: #4b0082;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
   padding: 0.5rem 1rem;
   color: #fff;
   border-top: 3px solid #000;
   border-bottom: 3px solid #000;
-  position: relative;
 
-  .jukebox-title {
-    text-align: center;
-    flex-grow: 1;
-    font-family: 'Luckiest Guy', cursive;
-    font-size: 2.6rem;
-    color: #ffcc00;
-    text-shadow: 2px 2px #000, 4px 4px #ff00ff;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .coin-slot {
-    position: absolute;
-    right: 1.5rem;
-    top: 50%;
-    transform: translateY(-50%);
+  .jukebox-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-    font-family: 'Courier New', Courier, monospace;
+    flex-wrap: wrap;
 
-    img {
-      height: 64px;
-      width: auto;
+    @include respond-to('mobile') {
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
-    span {
+    .jukebox-title {
+      text-align: center;
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 2.6rem;
       color: #ffcc00;
-      font-weight: bold;
-      text-shadow: 1px 1px #000;
+      text-shadow: 2px 2px #000, 4px 4px #ff00ff;
+      letter-spacing: 2px;
       text-transform: uppercase;
+
+      @include respond-to('tablet') {
+        font-size: 2rem;
+      }
+
+      @include respond-to('mobile') {
+        font-size: 1.6rem;
+      }
+    }
+
+    .coin-slot {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+
+      img {
+        height: 64px;
+        width: auto;
+
+        @include respond-to('mobile') {
+          height: 40px;
+        }
+      }
+
+      span {
+        color: #ffcc00;
+        font-weight: bold;
+        text-shadow: 1px 1px #000;
+        text-transform: uppercase;
+
+        @include respond-to('mobile') {
+          font-size: 0.8rem;
+        }
+      }
     }
   }
 }
@@ -79,6 +113,10 @@
     text-shadow: 1px 1px 0 #000;
     text-transform: uppercase;
     font-weight: bold;
+
+    @include respond-to('mobile') {
+      font-size: 1rem;
+    }
   }
 
   input {
@@ -87,6 +125,10 @@
     margin-right: 0.5rem;
     border-radius: 4px;
     border: none;
+
+    @include respond-to('mobile') {
+      width: 180px;
+    }
   }
 
   button {
@@ -106,6 +148,10 @@
 .jukebox-carousel {
   padding: 0.8rem 1rem;
   background: #1a0033;
+
+  @include respond-to('mobile') {
+    padding: 0.5rem;
+  }
 }
 
 .jukebox-bottom {
@@ -114,6 +160,10 @@
   padding: 0.4rem;
   border-top: 5px solid #660033;
   position: relative;
+
+  @include respond-to('mobile') {
+    padding: 0.3rem;
+  }
 }
 
 .jukebox-glow {
@@ -134,4 +184,9 @@
   text-shadow: 1px 1px 0 #000;
   font-family: 'Courier New', Courier, monospace;
   letter-spacing: 0.5px;
+
+  @include respond-to('mobile') {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+  }
 }

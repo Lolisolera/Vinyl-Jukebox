@@ -1,3 +1,5 @@
+@use '../styles/breakpoints' as *;
+
 .vinyl-carousel {
   padding: 2rem;
   background-color: #111;
@@ -6,12 +8,26 @@
   margin: 2rem auto;
   box-shadow: 0 0 25px rgba(255, 105, 180, 0.5);
 
+  @include respond-to('tablet') {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+
+  @include respond-to('mobile') {
+    padding: 1rem;
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
   .record-slide {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 1rem;
-    position: relative;
+
+    @include respond-to('mobile') {
+      padding: 0.5rem;
+    }
 
     .image-wrapper {
       position: relative;
@@ -22,6 +38,11 @@
       overflow: hidden;
       box-shadow: 0 0 15px hotpink;
       background-color: #222;
+
+      @include respond-to('mobile') {
+        width: 180px;
+        height: 180px;
+      }
 
       img {
         width: 100%;
@@ -58,6 +79,12 @@
         font-size: 18px;
         color: white;
 
+        @include respond-to('mobile') {
+          width: 30px;
+          height: 30px;
+          font-size: 16px;
+        }
+
         &:hover {
           background-color: rgba(255, 255, 255, 0.2);
           transform: scale(1.1);
@@ -83,33 +110,30 @@
           box-shadow: 0 0 8px hotpink;
         }
 
-     &.like-button {
-       top: 10px;
-       right: 10px;
-       background-color: transparent;
-       border: none;
-       color: white;
-       font-size: 20px;
-       padding: 0;
-       opacity: 0.4;
-       transition: all 0.4s ease;
+        &.like-button {
+          top: 10px;
+          right: 10px;
+          background-color: transparent;
+          border: none;
+          color: white;
+          font-size: 20px;
+          padding: 0;
+          opacity: 0.4;
+          transition: all 0.4s ease;
 
-       &:hover {
-         background-color: rgba(255, 255, 255, 0.15);
-         border-radius: 6px;
-         opacity: 1;
-         transform: scale(1.1);
-       }
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            opacity: 1;
+            transform: scale(1.1);
+          }
 
-       &.liked {
-         background-color: transparent;
-         color: white;
-         opacity: 1;
-       }
-     }
-
-
-
+          &.liked {
+            background-color: transparent;
+            color: white;
+            opacity: 1;
+          }
+        }
       }
     }
 
@@ -118,11 +142,21 @@
       color: white;
       font-family: 'Courier New', Courier, monospace;
       font-size: 1.1rem;
+      text-align: center;
+
+      @include respond-to('mobile') {
+        font-size: 1rem;
+      }
     }
 
     p {
       font-style: italic;
       color: #ccc;
+      font-size: 0.9rem;
+
+      @include respond-to('mobile') {
+        font-size: 0.8rem;
+      }
     }
 
     audio {
@@ -139,6 +173,10 @@
     &::before {
       color: white;
       font-size: 24px;
+
+      @include respond-to('mobile') {
+        font-size: 20px;
+      }
     }
   }
 }

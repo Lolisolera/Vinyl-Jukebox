@@ -1,0 +1,56 @@
+@use '../styles/breakpoints' as *;
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+
+  input {
+    padding: 0.5rem;
+    width: 260px;
+    border-radius: 4px;
+    border: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #ffaa00;
+    }
+  }
+
+  @include respond-to('tablet') {
+    flex-direction: row;
+
+    input {
+      width: 200px;
+    }
+  }
+
+  @include respond-to('mobile') {
+    flex-direction: column;
+
+    input {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}
