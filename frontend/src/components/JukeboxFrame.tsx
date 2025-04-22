@@ -7,15 +7,22 @@ const JukeboxFrame = ({ children }: { children: React.ReactNode }) => {
 
   const handleInsertCoin = () => {
     setCoinInserted(true);
-    const audio = new Audio('/coin-sound.mp3'); // Add your sound file to public folder
+    const audio = new Audio('/coin-sound.mp3');
     audio.play();
   };
 
   return (
-    <div className="jukebox-frame" aria-label="Vinyl Jukebox container">
+    <div
+      className={`jukebox-frame ${!coinInserted ? 'locked' : ''}`}
+      aria-label="Vinyl Jukebox container"
+    >
       {/* 🔸 Top Arch */}
       <div className="jukebox-arch">
-        <div className="coin-slot" onClick={handleInsertCoin} style={{ cursor: 'pointer' }}>
+        <div
+          className="coin-slot"
+          onClick={handleInsertCoin}
+          style={{ cursor: 'pointer' }}
+        >
           <img src="/coin-slot.png" alt="Insert Coin" />
           <span>Insert £1</span>
         </div>
@@ -38,7 +45,9 @@ const JukeboxFrame = ({ children }: { children: React.ReactNode }) => {
         </div>
       )}
 
-      <div className="jukebox-carousel">{children}</div>
+      <div className="jukebox-carousel">
+        {children}
+      </div>
 
       <div className="jukebox-bottom">
         <div className="jukebox-glow" />

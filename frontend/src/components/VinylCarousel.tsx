@@ -59,7 +59,7 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
 
   const settings = {
     dots: true,
-    infinite: records.length > 3,
+    infinite: records.length > 3, // 🔁 Only infinite if enough records
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
