@@ -1,222 +1,150 @@
-# 🎛️ Vinyl-Jukebox – Full Stack Project Pseudocode 
+# 🎛️ Vinyl-Jukebox – Full Stack Project Pseudocode (Revised – April 2025)
 
-## 1. **BACKEND (Spring Boot / Java)**
+## 1. BACKEND (Spring Boot / Java)
 
-### 1.1 **Entities**
+### 1.1 Entities
 
-@Entity User
-- id: Long
-- username: String
-- password: String
-- email: String
-- COLLECTION: List<Record>
-
+```text
 @Entity Record
 - id: Long
 - title: String
-- releaseYear: Integer
 - artist: Artist
 - genres: Set<Genre>
 - albumCover: AlbumCover
-- spotifyTrackId: String?   // e.g. "3n3Ppam7vgaVa1iaRUc9Lp"
+- deezerTrackId: String
+- previewUrl: String
+```
 
+```text
 @Entity Artist
 - id: Long
 - name: String
-- bio: String
-- country: String
-- records: List<Record>
+```
 
+```text
 @Entity Genre
 - id: Long
 - name: String
-- records: Set<Record>
+```
 
+```text
 @Entity AlbumCover
 - id: Long
 - imageUrl: String
-- record: Record
-
-@Entity RecordCollection
-- id: Long
-- user: User
-- record: Record
-- dateAdded: Date
 ```
 
-> **Note**: I add `spotifyTrackId` to `Record` so that I can reference tracks on Spotify without hosting audio myself.
-```
+---
 
-### 1.2 **Repositories**
+### 1.2 Repositories
+
 ```text
-UserRepository
-- findByUsername(String username): Optional<User>
-
 RecordRepository
-- findByTitle(String title): List<Record>
-- findByGenres(Genre genre): List<Record>
-- findByArtist(Artist artist): List<Record>
-// Possibly: findBySpotifyTrackId(String spotifyTrackId)
+- findAll()
+- findByDeezerTrackId(String deezerTrackId)
 
 ArtistRepository
-- findAll(): List<Artist>
+- findByName(String name)
 
 GenreRepository
-- findAll(): List<Genre>
-
-RecordCollectionRepository
-- findByUser(User user): List<RecordCollection>
+- findByName(String name)
 ```
 
+---
 
- 
-### 1.3 **Services**
+### 1.3 Services
 
-UserService
-- registerUser(UserDTO): User
-- authenticateUser(Credentials): Boolean
-
+```text
 RecordService
 - getAllRecords(): List<Record>
-- getRecordById(long id): Record
-- searchRecords(String query): List<Record>
-- createOrUpdateRecord(Record record): Record // handles local + Spotify-based track references
+- addRecordFromDeezer(String trackId): Record
 
-CollectionService
-- addToCollection(long userId, long recordId): RecordCollection
-- getUserCollection(long userId): List<RecordCollection>
-
-### 1.4 **Spotify Integration**
-
-```text
-SpotifyIntegrationService
-- searchTracks(String query): List<SpotifyTrackDTO>
-  // calls Spotify’s /search endpoint, returns minimal info (id, name, artist)
-- getTrackById(String spotifyTrackId): SpotifyTrackDTO
-  // calls Spotify’s /tracks/{id} endpoint
-
-// Only store the track ID in your DB if you want to reference it locally.
-// The audio streams remain on Spotify’s side.
+DeezerIntegrationService
+- searchTracks(String query): List<DeezerTrackDTO>
+- getTrackById(String id): DeezerTrackDTO
 ```
 
 ---
 
-### 1.5 **Controllers**
+### 1.4 Controllers
 
 ```text
-UserController
-- POST /users/register → register new user
-- POST /users/login → validate credentials
-
 RecordController
-- GET /records → get all records
-- GET /records/{id} → get record by ID
-- GET /records/search?q=term → search by title/genre/artist
-- POST /records → create or update record
-// Possibly a special endpoint if you want to create a local record from a Spotify track ID
-
-CollectionController
-- POST /collections → add record to user’s collection
-- GET /collections/{userId} → get user’s collection
-
-SpotifyController (Optional)
-- GET /spotify/search?q=term → calls SpotifyIntegrationService
-- GET /spotify/tracks/{spotifyTrackId} → returns track details
+- GET /records
+- POST /records/deezer-add
+- GET /records/deezer-search?query=...
 ```
-
-> You can combine Spotify endpoints into `RecordController` if you prefer.
 
 ---
 
-## 2. **DATABASE (PostgreSQL or MySQL)**
+## 2. DATABASE (PostgreSQL)
 
-All tables remain the same, but add a column in `records`:
+```sql
+TABLE record (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR,
+  deezer_track_id VARCHAR,
+  preview_url VARCHAR,
+  artist_id INTEGER,
+  album_cover_id INTEGER
+)
 
-```text
-TABLE records
-- id BIGSERIAL PRIMARY KEY
-- title VARCHAR
-- release_year INT
-- artist_id BIGINT FK → artists.id
-- album_cover_id BIGINT FK → album_covers.id
-- spotify_track_id VARCHAR NULL  // optional
+TABLE artist (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR
+)
+
+TABLE genre (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR
+)
+
+TABLE record_genre (
+  record_id INTEGER,
+  genre_id INTEGER
+)
+
+TABLE album_cover (
+  id SERIAL PRIMARY KEY,
+  image_url VARCHAR
+)
 ```
-
-Everything else stays the same.
 
 ---
 
-## 3. **FRONTEND (React + TypeScript + SCSS)**
+## 3. FRONTEND (React + TypeScript + SCSS)
 
-### 3.1 **Components** (Retro Theme)
+### Components
 
-<App>
- - Renders Header, Routes, Footer
+- `<App>`: Holds global state (records, highlightedId, coin inserted)
+- `<JukeboxFrame>`: Neon title, insert coin interaction, search area
+- `<SearchAndImport>`: Search & import from Deezer API, informs parent
+- `<VinylCarousel>`: Displays record list with play, like, delete buttons
 
-<HomePage>
- - Insert Coin animation → leads to RecordList
+### Features
 
-<RecordList>
- - useEffect(): fetch /records
- - Search bar (local DB)
- - Optional: “Search Spotify” → fetch from /spotify/search
- - Filter dropdown
- - Display RecordCard
+- “Insert £1” enables access
+- After 3 tracks played, access locks again
+- Newly imported track scrolls into view & flashes
+- Coin sound effect
+- Neon flashing insert message
+- Default album image fallback
 
-<RecordCard>
- - Props: record
- - OnClick → navigate to RecordDetail
+---
 
-<RecordDetail>
- - useEffect(): fetch /records/{id}
- - Show record info or Spotify preview link
- - “Add to collection” → POST /collections
+## 4. DEPLOYMENT PLAN
 
-<UserCollection>
- - useEffect(): fetch /collections/{userId}
- - Show saved records
+### Frontend (React + Vite)
+- **Host**: Netlify (free)
+- `npm run build` → auto-deploy from GitHub
+- Set `VITE_API_URL` in Netlify environment settings
 
-<Login/Register>
- - Form submission → POST /users/login or /register
- - Store user in localStorage/context
+### Backend (Spring Boot + Maven)
+- **Host**: Railway (free tier)
+- Connect GitHub repo
+- Add environment variables:
+    - `DB_URL`, `DB_USER`, `DB_PASS`
+    - `DEEZER_ID`, `DEEZER_SECRET`
 
-api.ts (utils)
- - Contains functions for all endpoints (GET, POST, etc.)
-
-
-> Emphasize a **retro vinyl machine** vibe. If a track has `spotifyTrackId`, show a “Preview on Spotify” button or embed.
-
-## 4. **FLOW OVERVIEW**
-
-1) USER lands on HomePage
-   → Insert Coin → goes to RecordList
-   → Browses local records or searches Spotify
-   → Chooses a record → goes to RecordDetail
-   → If record is from Spotify, show link or embed
-   → “Add to collection” → POST /collections
-
-2) USER optionally logs in / registers
-   → sees own saved records in <UserCollection>
-
-
-## 5. **DEPLOYMENT PLAN**
-
-Backend (Spring Boot)
-1) Package with Maven: mvn clean install
-2) Deploy to e.g. Render, Railway, or Heroku
-3) Configure environment variables for DB + Spotify credentials
-
-Database (PostgreSQL/MySQL)
-- PlanetScale, ElephantSQL, or ClearDB (Heroku)
-- Ensure DB is publicly accessible
-
-Frontend (ReactTS)
-1) npm run build
-2) Deploy to Netlify, Vercel, or GitHub Pages
-3) Proxy requests to your backend URL
-
-Optional extras:
-- CI/CD with GitHub Actions for automatic deploy
-- .env for sensitive config
-
-
+### Database (PostgreSQL)
+- Hosted on **Railway**
+- Replace local pgAdmin settings with Railway connection string
