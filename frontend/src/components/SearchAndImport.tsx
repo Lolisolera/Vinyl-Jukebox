@@ -1,19 +1,25 @@
 import './SearchAndImport.scss';
 import { useState } from 'react';
 import axios from 'axios';
+import { addRecordFromDeezer, Record } from '../services/recordService';
 
-const SearchAndImport = () => {
+interface Props {
+  onTrackImported: (track: Record) => void;
+}
+
+const SearchAndImport = ({ onTrackImported }: Props) => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
-
     setLoading(true);
+
     try {
-      const response = await axios.get(`http://localhost:8080/api/records/deezer-search?query=${query}`);
-      console.log("🎧 Deezer search results:", response.data); // Debug previewUrl
+      const response = await axios.get(
+        `http://localhost:8080/api/records/deezer-search?query=${query}`
+      );
       setResults(response.data);
     } catch (err) {
       console.error('Search failed:', err);
@@ -24,15 +30,13 @@ const SearchAndImport = () => {
 
   const handleImport = async (trackId: string) => {
     try {
-      const response = await axios.post(`/api/records/deezer-add`, null, {
-        params: { trackId },
-      });
+      const newRecord = await addRecordFromDeezer(trackId);
+      alert('✅ Track imported!');
+      onTrackImported(newRecord);
 
-      if (response.status === 200) {
-        alert('✅ Track imported!');
-      } else {
-        alert('❌ Import failed.');
-      }
+      // ✨ Clear input and results after import
+      setQuery('');
+      setResults([]);
     } catch (error: any) {
       console.error('❌ Import failed:', error.response?.data || error.message);
       alert('❌ Import failed. The track may already exist.');
@@ -41,7 +45,6 @@ const SearchAndImport = () => {
 
   return (
     <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-
       <input
         type="text"
         value={query}
@@ -62,7 +65,6 @@ const SearchAndImport = () => {
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {results.map((track: any) => {
           const isPlayable = track.previewUrl && track.previewUrl.endsWith('.mp3');
-          console.log(`▶️ Track: ${track.title}, Preview URL:`, track.previewUrl);
 
           return (
             <li key={track.id} style={{ marginTop: '1.5rem' }}>
@@ -76,12 +78,18 @@ const SearchAndImport = () => {
                   </audio>
                 </div>
               ) : (
-                <p style={{ fontStyle: 'italic', color: '#999' }}>No preview available</p>
+                <p style={{ fontStyle: 'italic', color: '#999' }}>
+                  No preview available
+                </p>
               )}
 
               <div>
                 <button
-                  style={{ marginTop: '0.5rem', padding: '0.4rem 0.8rem', cursor: 'pointer' }}
+                  style={{
+                    marginTop: '0.5rem',
+                    padding: '0.4rem 0.8rem',
+                    cursor: 'pointer'
+                  }}
                   onClick={() => handleImport(track.id)}
                 >
                   Import

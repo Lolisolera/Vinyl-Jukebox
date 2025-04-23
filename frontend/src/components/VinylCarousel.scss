@@ -26,6 +26,7 @@
     justify-content: center;
     padding: 1rem;
     text-align: center;
+    transition: box-shadow 0.4s ease;
 
     @include respond-to('mobile') {
       padding: 0.5rem;
@@ -45,6 +46,10 @@
       @include respond-to('mobile') {
         width: 180px;
         height: 180px;
+      }
+
+      &.highlighted {
+        animation: highlight-glow 2s ease-in-out;
       }
 
       img {
@@ -184,5 +189,26 @@
         font-size: 20px;
       }
     }
+  }
+}
+
+@keyframes highlight-glow {
+  0% {
+    box-shadow: 0 0 0 transparent;
+  }
+  20% {
+    box-shadow: 0 0 10px 5px yellow;
+  }
+  40% {
+    box-shadow: 0 0 20px 10px orange;
+  }
+  60% {
+    box-shadow: 0 0 30px 15px red;
+  }
+  80% {
+    box-shadow: 0 0 20px 10px orange;
+  }
+  100% {
+    box-shadow: 0 0 0 transparent;
   }
 }

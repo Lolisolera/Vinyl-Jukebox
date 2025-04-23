@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import { Record, deleteRecord } from '../services/recordService';
 import './VinylCarousel.scss';
@@ -6,12 +6,23 @@ import './VinylCarousel.scss';
 interface Props {
   records: Record[];
   onDelete: (id: number) => void;
+  highlightedId?: number | null;
 }
 
-const VinylCarousel = ({ records, onDelete }: Props) => {
+const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(null);
   const [likedRecords, setLikedRecords] = useState<number[]>([]);
+  const sliderRef = useRef<Slider>(null);
+
+  useEffect(() => {
+    if (highlightedId && sliderRef.current) {
+      const index = records.findIndex((record) => record.id === highlightedId);
+      if (index !== -1) {
+        sliderRef.current.slickGoTo(index);
+      }
+    }
+  }, [highlightedId, records]);
 
   const handleDelete = async (id: number) => {
     const confirm = window.confirm('Are you sure you want to delete this track?');
@@ -28,7 +39,7 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
   };
 
   const handlePlayPause = (record: Record) => {
-    if (!record.previewUrl) return;
+    if (!record.previewUrl || document.body.classList.contains('locked')) return;
 
     if (audioRef.current && currentlyPlayingId === record.id) {
       audioRef.current.pause();
@@ -52,6 +63,8 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
   };
 
   const handleLike = (id: number) => {
+    if (document.body.classList.contains('locked')) return;
+
     setLikedRecords((prev) =>
       prev.includes(id) ? prev.filter((likedId) => likedId !== id) : [...prev, id]
     );
@@ -59,7 +72,7 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
 
   const settings = {
     dots: true,
-    infinite: records.length > 3, // 🔁 Only infinite if enough records
+    infinite: records.length > 3,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
@@ -78,15 +91,19 @@ const VinylCarousel = ({ records, onDelete }: Props) => {
 
   return (
     <div className="vinyl-carousel">
-      <Slider {...settings}>
+      <Slider ref={sliderRef} {...settings}>
         {records.map((record) => {
-          const imageUrl = record.albumCover?.imageUrl || record.albumCoverUrl || '/default-cover.jpg';
-          const artistName = record.artist?.name || record.artistName || 'Unknown Artist';
+          const imageUrl =
+            record.albumCover?.imageUrl || record.albumCoverUrl || '/default-cover.jpg';
+          const artistName =
+            record.artist?.name || record.artistName || 'Unknown Artist';
           const isLiked = likedRecords.includes(record.id);
 
           return (
             <div key={record.id} className="record-slide">
-              <div className="image-wrapper">
+              <div
+                className={`image-wrapper ${highlightedId === record.id ? 'highlighted' : ''}`}
+              >
                 <img src={imageUrl} alt={record.title} />
 
                 <button

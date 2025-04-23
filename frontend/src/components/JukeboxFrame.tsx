@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import './JukeboxFrame.scss';
 import SearchAndImport from './SearchAndImport';
+import { Record } from '../services/recordService';
 
-const JukeboxFrame = ({ children }: { children: React.ReactNode }) => {
+interface JukeboxFrameProps {
+  children: React.ReactNode;
+  onTrackImported?: (record: Record) => void;
+}
+
+const JukeboxFrame = ({ children, onTrackImported }: JukeboxFrameProps) => {
   const [coinInserted, setCoinInserted] = useState(false);
 
   const handleInsertCoin = () => {
@@ -41,7 +47,7 @@ const JukeboxFrame = ({ children }: { children: React.ReactNode }) => {
       ) : (
         <div className="jukebox-search">
           <h3>🔍 Search and add a record</h3>
-          <SearchAndImport />
+          <SearchAndImport onTrackImported={onTrackImported} />
         </div>
       )}
 
