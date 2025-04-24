@@ -26,11 +26,10 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteRecord(id); // Deletes track from backend
-      onDelete(id); // Updates UI immediately
+      await deleteRecord(id);
+      onDelete(id);
     } catch (error) {
       console.error('Failed to delete track:', error);
-      // No alert here, the track is just not deleted if there's an error
     }
   };
 
@@ -43,10 +42,17 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
       setCurrentlyPlayingId(null);
     } else {
       audioRef.current?.pause();
+
+      // Check if the previewUrl is valid
       const newAudio = new Audio(record.previewUrl);
-      newAudio.play();
+      newAudio.play().catch((error) => {
+        console.error('Error playing audio:', error);
+        alert('Failed to play track. The preview URL may be invalid.');
+      });
+
       audioRef.current = newAudio;
       setCurrentlyPlayingId(record.id);
+
       newAudio.addEventListener('ended', () => {
         setCurrentlyPlayingId(null);
         audioRef.current = null;
@@ -67,7 +73,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
-    arrows: true, // Ensure arrows are enabled for navigation
+    arrows: true,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
       { breakpoint: 768, settings: { slidesToShow: 1 } },
@@ -93,13 +99,13 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
                 <button
                   className="overlay-button delete-button"
-                  onClick={() => handleDelete(record.id)} // Deletes the record
+                  onClick={() => handleDelete(record.id)}
                   title="Delete"
                 >
                   🗑️
                 </button>
 
-                {record.previewUrl && (
+                {record.previewUrl ? (
                   <button
                     className="overlay-button play-button"
                     onClick={() => handlePlayPause(record)}
@@ -107,11 +113,15 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
                   >
                     {currentlyPlayingId === record.id ? '⏸️' : '▶️'}
                   </button>
+                ) : (
+                  <p style={{ fontStyle: 'italic', color: '#999' }}>
+                    No preview available
+                  </p>
                 )}
 
                 <button
                   className={`overlay-button like-button ${isLiked ? 'liked' : ''}`}
-                  onClick={() => handleLike(record.id)} // Like or Unlike the track
+                  onClick={() => handleLike(record.id)}
                   title={isLiked ? 'Unlike' : 'Like'}
                 >
                   {isLiked ? '❤️' : '🤍'}
