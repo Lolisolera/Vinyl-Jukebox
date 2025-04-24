@@ -17,7 +17,6 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
     setLoading(true);
 
     try {
-
       const response = await api.get(`/records/deezer-search`, {
         params: { query },
       });
@@ -32,10 +31,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
   const handleImport = async (trackId: string) => {
     try {
       const newRecord = await addRecordFromDeezer(trackId);
-      alert('✅ Track imported!');
-      onTrackImported(newRecord);
-
-      // ✨ Clear input and results after import
+      onTrackImported(newRecord); // Only call onTrackImported, no alert
       setQuery('');
       setResults([]);
     } catch (error: any) {
@@ -89,7 +85,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
                   style={{
                     marginTop: '0.5rem',
                     padding: '0.4rem 0.8rem',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                   onClick={() => handleImport(track.id)}
                 >
