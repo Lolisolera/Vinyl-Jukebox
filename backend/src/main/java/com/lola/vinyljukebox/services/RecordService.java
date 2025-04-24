@@ -124,7 +124,7 @@ public class RecordService {
         if (recordOpt.isPresent()) {
             Record record = recordOpt.get();
 
-            // Break relationships
+            // Break relationships and remove dependencies
             if (record.getAlbumCover() != null) {
                 record.setAlbumCover(null);
             }
@@ -133,10 +133,10 @@ public class RecordService {
                 record.getGenres().clear(); // Clear join table
             }
 
-            // Ensure the record is updated with broken links before deleting
+            // Save changes before deleting
             recordRepository.save(record);
 
-            // Delete the record
+            // Delete the record from the database
             recordRepository.deleteById(id);
         }
     }
