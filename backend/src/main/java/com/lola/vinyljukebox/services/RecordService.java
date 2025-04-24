@@ -133,8 +133,10 @@ public class RecordService {
                 record.getGenres().clear(); // Clear join table
             }
 
-            recordRepository.save(record); // Update to break links
+            // Ensure the record is updated with broken links before deleting
+            recordRepository.save(record);
 
+            // Delete the record
             recordRepository.deleteById(id);
         }
     }

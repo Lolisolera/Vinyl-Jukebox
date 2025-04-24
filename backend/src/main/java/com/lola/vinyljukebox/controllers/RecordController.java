@@ -78,7 +78,12 @@ public class RecordController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Record not found for ID: " + id);
         }
-        recordService.deleteRecord(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        try {
+            recordService.deleteRecord(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while deleting the record: " + e.getMessage());
+        }
     }
 }
