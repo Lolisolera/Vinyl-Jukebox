@@ -5,7 +5,8 @@ import { Record } from '../services/recordService';
 
 interface JukeboxFrameProps {
   children: React.ReactNode;
-  onTrackImported?: (record: Record) => void;
+  /** Called when a track is imported so parent can update carousel */
+  onTrackImported: (record: Record) => void;
 }
 
 const JukeboxFrame = ({ children, onTrackImported }: JukeboxFrameProps) => {
@@ -47,13 +48,12 @@ const JukeboxFrame = ({ children, onTrackImported }: JukeboxFrameProps) => {
       ) : (
         <div className="jukebox-search">
           <h3>🔍 Search and add a record</h3>
+          {/* Now guaranteed defined */}
           <SearchAndImport onTrackImported={onTrackImported} />
         </div>
       )}
 
-      <div className="jukebox-carousel">
-        {children}
-      </div>
+      <div className="jukebox-carousel">{children}</div>
 
       <div className="jukebox-bottom">
         <div className="jukebox-glow" />

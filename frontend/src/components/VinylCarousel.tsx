@@ -1,3 +1,5 @@
+// src/components/VinylCarousel.tsx
+
 import { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import { Record, deleteRecord } from '../services/recordService';
@@ -13,10 +15,11 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(null);
   const [likedRecords, setLikedRecords] = useState<number[]>([]);
-  const sliderRef = useRef<Slider>(null);
+  // ← change here: use any for the Slider ref
+  const sliderRef = useRef<any>(null);
 
   useEffect(() => {
-    if (highlightedId && sliderRef.current) {
+    if (highlightedId != null && sliderRef.current) {
       const index = records.findIndex((record) => record.id === highlightedId);
       if (index !== -1) {
         sliderRef.current.slickGoTo(index);
@@ -25,14 +28,12 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   }, [highlightedId, records]);
 
   const handleDelete = async (id: number) => {
-    const confirm = window.confirm('Are you sure you want to delete this track?');
-    if (confirm) {
+    if (window.confirm('Are you sure you want to delete this track?')) {
       if (audioRef.current && currentlyPlayingId === id) {
         audioRef.current.pause();
         audioRef.current = null;
         setCurrentlyPlayingId(null);
       }
-
       await deleteRecord(id);
       onDelete(id);
     }
@@ -46,15 +47,11 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
       audioRef.current = null;
       setCurrentlyPlayingId(null);
     } else {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-
+      audioRef.current?.pause();
       const newAudio = new Audio(record.previewUrl);
       newAudio.play();
       audioRef.current = newAudio;
       setCurrentlyPlayingId(record.id);
-
       newAudio.addEventListener('ended', () => {
         setCurrentlyPlayingId(null);
         audioRef.current = null;
@@ -64,7 +61,6 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
   const handleLike = (id: number) => {
     if (document.body.classList.contains('locked')) return;
-
     setLikedRecords((prev) =>
       prev.includes(id) ? prev.filter((likedId) => likedId !== id) : [...prev, id]
     );
@@ -78,14 +74,8 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     slidesToScroll: 1,
     arrows: true,
     responsive: [
-      {
-        breakpoint: 1024,
-        settings: { slidesToShow: 2 }
-      },
-      {
-        breakpoint: 768,
-        settings: { slidesToShow: 1 }
-      }
+      { breakpoint: 1024, settings: { slidesToShow: 2 } },
+      { breakpoint: 768,  settings: { slidesToShow: 1 } }
     ]
   };
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getAllRecords, Record } from './services/recordService';
 import VinylCarousel from './components/VinylCarousel';
 import JukeboxFrame from './components/JukeboxFrame';
@@ -6,7 +6,6 @@ import './App.scss';
 
 const App = () => {
   const [records, setRecords] = useState<Record[]>([]);
-  const carouselRef = useRef<HTMLDivElement | null>(null);
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
 
   const fetchRecords = async () => {
