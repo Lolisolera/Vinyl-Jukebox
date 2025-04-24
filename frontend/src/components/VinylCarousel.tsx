@@ -26,11 +26,11 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteRecord(id);
-      onDelete(id);
+      await deleteRecord(id); // Deletes track from backend
+      onDelete(id); // Updates UI immediately
     } catch (error) {
       console.error('Failed to delete track:', error);
-
+      // No alert here, the track is just not deleted if there's an error
     }
   };
 
@@ -67,7 +67,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
-    arrows: true,
+    arrows: true, // Ensure arrows are enabled for navigation
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
       { breakpoint: 768, settings: { slidesToShow: 1 } },
@@ -93,7 +93,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
                 <button
                   className="overlay-button delete-button"
-                  onClick={() => handleDelete(record.id)}
+                  onClick={() => handleDelete(record.id)} // Deletes the record
                   title="Delete"
                 >
                   🗑️
@@ -111,7 +111,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
                 <button
                   className={`overlay-button like-button ${isLiked ? 'liked' : ''}`}
-                  onClick={() => handleLike(record.id)}
+                  onClick={() => handleLike(record.id)} // Like or Unlike the track
                   title={isLiked ? 'Unlike' : 'Like'}
                 >
                   {isLiked ? '❤️' : '🤍'}
