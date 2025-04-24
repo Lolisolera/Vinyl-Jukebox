@@ -1,6 +1,5 @@
 import axios from '../api';
 
-// Match backend DTO or full entity shape
 export interface Artist {
   name: string;
 }
