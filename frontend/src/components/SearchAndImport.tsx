@@ -20,9 +20,13 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
       const response = await api.get(`/records/deezer-search`, {
         params: { query },
       });
+      if (response.data.length === 0) {
+        alert(`No results found for "${query}".`);
+      }
       setResults(response.data);
     } catch (err) {
       console.error('Search failed:', err);
+      alert('There was an issue with the search. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -35,8 +39,8 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
       setQuery('');
       setResults([]);
     } catch (error: any) {
-      console.error('❌ Import failed:', error.response?.data || error.message);
-      alert('❌ Import failed. The track may already exist.');
+      console.error('Import failed:', error.response?.data || error.message);
+      alert('Import failed. The track may already exist.');
     }
   };
 
@@ -49,7 +53,9 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
         placeholder="Search for a track..."
         style={{ padding: '0.5rem', width: '300px', marginRight: '1rem' }}
       />
-      <button onClick={handleSearch}>Search</button>
+      <button onClick={handleSearch} disabled={loading}>
+        {loading ? 'Searching...' : 'Search'}
+      </button>
 
       {loading && <p>Loading...</p>}
 

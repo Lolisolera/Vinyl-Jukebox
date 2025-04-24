@@ -17,8 +17,15 @@ const App = () => {
     fetchRecords();
   }, []);
 
-  const handleDelete = (id: number) => {
-    setRecords((prev) => prev.filter((record) => record.id !== id));
+  const handleDelete = async (id: number) => {
+    try {
+      // Wait for the record to be deleted from the backend
+      await deleteRecord(id);
+      // Remove the record from the UI
+      setRecords((prev) => prev.filter((record) => record.id !== id));
+    } catch (error) {
+      console.error('Failed to delete track:', error);
+    }
   };
 
   const handleTrackImported = (newTrack: Record) => {
