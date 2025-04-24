@@ -14,7 +14,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/records")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://vinyl-jukebox.netlify.app"
+})
 public class RecordController {
 
     private final RecordService recordService;
