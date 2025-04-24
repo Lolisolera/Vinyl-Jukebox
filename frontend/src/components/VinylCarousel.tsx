@@ -13,7 +13,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(null);
   const [likedRecords, setLikedRecords] = useState<number[]>([]);
-  const sliderRef = useRef<any>(null); // ← `any` for react-slick Slider
+  const sliderRef = useRef<any>(null); // `any` for react-slick Slider
 
   useEffect(() => {
     if (highlightedId != null && sliderRef.current) {
@@ -26,21 +26,11 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      const confirmDelete = window.confirm('Are you sure you want to delete this track?');
-      if (!confirmDelete) return;
-
-      if (audioRef.current && currentlyPlayingId === id) {
-        audioRef.current.pause();
-        audioRef.current = null;
-        setCurrentlyPlayingId(null);
-      }
-
-      await deleteRecord(id); // Ensure backend deletion before updating frontend
-      onDelete(id);
-      console.log(`Track with ID ${id} deleted.`);
+      await deleteRecord(id); // Delete track from backend
+      onDelete(id); // Immediately remove the track from the UI carousel
     } catch (error) {
       console.error('Failed to delete track:', error);
-      alert('Sorry, there was a problem deleting the track.');
+      // No alert here, the track is just not deleted if there's an error
     }
   };
 
@@ -77,11 +67,11 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
-    arrows: true,
+    arrows: true, // Ensure arrows are enabled for navigation
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 768, settings: { slidesToShow: 1 } }
-    ]
+      { breakpoint: 768, settings: { slidesToShow: 1 } },
+    ],
   };
 
   return (
@@ -103,7 +93,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
                 <button
                   className="overlay-button delete-button"
-                  onClick={() => handleDelete(record.id)}
+                  onClick={() => handleDelete(record.id)} // Deletes the record
                   title="Delete"
                 >
                   🗑️
@@ -112,7 +102,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
                 {record.previewUrl && (
                   <button
                     className="overlay-button play-button"
-                    onClick={() => handlePlayPause(record)}
+                    onClick={() => handlePlayPause(record)} // Play or Pause the track
                     title={currentlyPlayingId === record.id ? 'Pause' : 'Play'}
                   >
                     {currentlyPlayingId === record.id ? '⏸️' : '▶️'}
@@ -121,7 +111,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
                 <button
                   className={`overlay-button like-button ${isLiked ? 'liked' : ''}`}
-                  onClick={() => handleLike(record.id)}
+                  onClick={() => handleLike(record.id)} // Like or Unlike the track
                   title={isLiked ? 'Unlike' : 'Like'}
                 >
                   {isLiked ? '❤️' : '🤍'}
