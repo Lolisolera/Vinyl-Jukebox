@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllRecords, Record } from './services/recordService';
+import { getAllRecords, Record, deleteRecord } from './services/recordService'; // Import deleteRecord here
 import VinylCarousel from './components/VinylCarousel';
 import JukeboxFrame from './components/JukeboxFrame';
 import './App.scss';
@@ -19,9 +19,7 @@ const App = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      // Wait for the record to be deleted from the backend
-      await deleteRecord(id);
-      // Remove the record from the UI
+      await deleteRecord(id);  // Ensure deleteRecord is used here
       setRecords((prev) => prev.filter((record) => record.id !== id));
     } catch (error) {
       console.error('Failed to delete track:', error);
