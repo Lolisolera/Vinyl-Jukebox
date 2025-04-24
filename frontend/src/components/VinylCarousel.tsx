@@ -1,5 +1,3 @@
-// src/components/VinylCarousel.tsx
-
 import { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import { Record, deleteRecord } from '../services/recordService';
@@ -15,8 +13,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(null);
   const [likedRecords, setLikedRecords] = useState<number[]>([]);
-  // ← change here: use any for the Slider ref
-  const sliderRef = useRef<any>(null);
+  const sliderRef = useRef<any>(null); // ← `any` for react-slick Slider
 
   useEffect(() => {
     if (highlightedId != null && sliderRef.current) {
@@ -28,14 +25,22 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   }, [highlightedId, records]);
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this track?')) {
+    try {
+      const confirmDelete = window.confirm('Are you sure you want to delete this track?');
+      if (!confirmDelete) return;
+
       if (audioRef.current && currentlyPlayingId === id) {
         audioRef.current.pause();
         audioRef.current = null;
         setCurrentlyPlayingId(null);
       }
-      await deleteRecord(id);
+
+      await deleteRecord(id); // Ensure backend deletion before updating frontend
       onDelete(id);
+      console.log(`Track with ID ${id} deleted.`);
+    } catch (error) {
+      console.error('Failed to delete track:', error);
+      alert('Sorry, there was a problem deleting the track.');
     }
   };
 
@@ -75,7 +80,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     arrows: true,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 768,  settings: { slidesToShow: 1 } }
+      { breakpoint: 768, settings: { slidesToShow: 1 } }
     ]
   };
 

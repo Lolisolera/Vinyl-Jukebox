@@ -1,6 +1,6 @@
 import './SearchAndImport.scss';
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { addRecordFromDeezer, Record } from '../services/recordService';
 
 interface Props {
@@ -17,9 +17,10 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
     setLoading(true);
 
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/records/deezer-search?query=${query}`
-      );
+
+      const response = await api.get(`/records/deezer-search`, {
+        params: { query },
+      });
       setResults(response.data);
     } catch (err) {
       console.error('Search failed:', err);
