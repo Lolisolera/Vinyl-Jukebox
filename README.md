@@ -44,7 +44,11 @@ A retro-inspired full-stack web application where users can search for and play 
 ---
 
 ### 🌍 Live Demo
-- **Will be added after successful deployment**
+Check out the **Vinyl Jukebox app** live here:  
+👉 [https://vinyl-jukebox.netlify.app](https://vinyl-jukebox.netlify.app)
+
+💡 To start using the app, insert a virtual £1 coin, search for a track, and enjoy the music!
+
 
 ### 🧠 Pseudocode
 See pseudocode.md for a detailed project breakdown, including architecture, components, flow, and database schema.
