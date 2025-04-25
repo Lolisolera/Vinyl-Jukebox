@@ -27,7 +27,7 @@ export const getAllRecords = async (): Promise<Record[]> => {
     return response.data;
   } catch (error) {
     console.error("Failed to fetch records:", error);
-    throw error; // Rethrow for the calling component to handle
+    throw error;
   }
 };
 
@@ -40,7 +40,7 @@ export const addRecordFromDeezer = async (trackId: string): Promise<Record> => {
     return response.data;
   } catch (error) {
     console.error("Failed to add record from Deezer:", error);
-    throw error; // Rethrow for the calling component to handle
+    throw error;
   }
 };
 
@@ -48,14 +48,14 @@ export const addRecordFromDeezer = async (trackId: string): Promise<Record> => {
 export const deleteRecord = async (id: number): Promise<void> => {
   try {
     const response = await axios.delete(`/records/${id}`);
-    if (response.status === 200) {
-      console.log(`Record with ID: ${id} deleted successfully.`);
+    if (response.status === 204 || response.status === 200) {
+      console.log(`✅ Record with ID: ${id} deleted successfully.`);
     } else {
-      console.error(`Failed to delete record with ID: ${id}`);
+      console.warn(`⚠️ Unexpected status code while deleting record: ${response.status}`);
     }
   } catch (error) {
-    console.error(`Error while trying to delete record with ID: ${id}`, error);
-    throw error; // Rethrow for the calling component to handle
+    console.error(`❌ Error deleting record with ID: ${id}`, error);
+    throw error;
   }
 };
 
@@ -69,6 +69,6 @@ export const updateRecord = async (
     return response.data;
   } catch (error) {
     console.error("Failed to update record:", error);
-    throw error; // Rethrow for the calling component to handle
+    throw error;
   }
 };
