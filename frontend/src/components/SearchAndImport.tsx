@@ -32,7 +32,18 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
       if (response.data.length === 0) {
         alert(`No results found for "${query}".`);
       }
-      setResults(response.data);
+
+      // Filter only valid playable tracks before rendering
+      const filteredResults = response.data.filter((track: DeezerTrack) =>
+        track.id &&
+        track.previewUrl &&
+        track.previewUrl.endsWith('.mp3') &&
+        track.albumCoverUrl &&
+        track.artistName &&
+        track.title
+      );
+
+      setResults(filteredResults);
     } catch (err) {
       console.error('Search failed:', err);
       alert('There was an issue with the search. Please try again.');
@@ -42,15 +53,15 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
   };
 
   const handleImport = async (trackId: string) => {
-    if (!trackId) {
+    if (!trackId || trackId === 'undefined') {
       console.error("Invalid trackId");
-      alert("Invalid trackId");
+      alert("Invalid track. Please try another.");
       return;
     }
 
     try {
       const newRecord = await addRecordFromDeezer(trackId);
-      onTrackImported(newRecord); // Add the track without alert
+      onTrackImported(newRecord);
       setQuery('');
       setResults([]);
     } catch (error: any) {
@@ -83,7 +94,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {results.map((track) => {
           const isPlayable = track.previewUrl && track.previewUrl.endsWith('.mp3');
-          const previewUrl: string | undefined = track.previewUrl ?? undefined; // Ensure no null values
+          const previewUrl: string | undefined = track.previewUrl ?? undefined;
 
           return (
             <li key={track.id} style={{ marginTop: '1.5rem' }}>
