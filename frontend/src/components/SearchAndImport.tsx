@@ -77,6 +77,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {results.map((track) => {
           const isPlayable = track.previewUrl && track.previewUrl.endsWith('.mp3');
+          const previewUrl: string | undefined = track.previewUrl ?? undefined; // Ensure no null values
 
           return (
             <li key={track.id} style={{ marginTop: '1.5rem' }}>
@@ -85,7 +86,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
               {isPlayable ? (
                 <div style={{ marginTop: '0.5rem' }}>
                   <audio controls>
-                    <source src={track.previewUrl} type="audio/mpeg" />
+                    <source src={previewUrl} type="audio/mpeg" />
                     Your browser does not support the audio element.
                   </audio>
                 </div>
