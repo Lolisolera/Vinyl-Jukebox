@@ -31,7 +31,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
       await deleteRecord(id); // Deletes track from backend
       onDelete(id); // Immediately update UI after deletion
       if (audioRef.current && currentlyPlayingId === id) {
-        audioRef.current.pause(); // Stops audio if the track is currently playing
+        audioRef.current.pause();
         audioRef.current = null;
         setCurrentlyPlayingId(null);
       }
@@ -107,7 +107,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
                 <button
                   className="overlay-button delete-button"
-                  onClick={() => handleDelete(record.id)} // Deletes the record
+                  onClick={() => handleDelete(record.id)}
                   title="Delete"
                 >
                   🗑️

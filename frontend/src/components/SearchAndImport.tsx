@@ -7,9 +7,17 @@ interface Props {
   onTrackImported: (track: Record) => void;
 }
 
+interface DeezerTrack {
+  id: string;
+  title: string;
+  artistName: string;
+  previewUrl: string | null;
+  albumCoverUrl: string | null;
+}
+
 const SearchAndImport = ({ onTrackImported }: Props) => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<DeezerTrack[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
@@ -20,6 +28,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
       const response = await api.get(`/records/deezer-search`, {
         params: { query },
       });
+
       if (response.data.length === 0) {
         alert(`No results found for "${query}".`);
       }
@@ -66,7 +75,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
       )}
 
       <ul style={{ listStyle: 'none', padding: 0 }}>
-        {results.map((track: any) => {
+        {results.map((track) => {
           const isPlayable = track.previewUrl && track.previewUrl.endsWith('.mp3');
 
           return (
