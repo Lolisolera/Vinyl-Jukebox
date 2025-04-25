@@ -13,6 +13,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<number | null>(null);
   const [likedRecords, setLikedRecords] = useState<number[]>([]);
+  const [deletingIds, setDeletingIds] = useState<number[]>([]);
   const sliderRef = useRef<any>(null);
 
   useEffect(() => {
@@ -25,11 +26,13 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
   }, [highlightedId, records]);
 
   const handleDelete = async (id: number) => {
-    try {
-      console.log("Attempting to delete record with ID:", id); // Debugging the ID
+    if (deletingIds.includes(id)) return;
+    setDeletingIds((prev) => [...prev, id]);
 
-      await deleteRecord(id); // Deletes track from backend
-      onDelete(id); // Immediately update UI after deletion
+    try {
+      console.log("Attempting to delete record with ID:", id);
+      await deleteRecord(id); // Deletes from backend
+      onDelete(id); // Update frontend UI
       if (audioRef.current && currentlyPlayingId === id) {
         audioRef.current.pause();
         audioRef.current = null;
@@ -38,6 +41,8 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     } catch (error) {
       console.error('Failed to delete track:', error);
       alert('❌ Failed to delete the track. Please try again later.');
+    } finally {
+      setDeletingIds((prev) => prev.filter((item) => item !== id));
     }
   };
 
@@ -51,7 +56,6 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     } else {
       audioRef.current?.pause();
 
-      // Check if the previewUrl is valid
       const newAudio = new Audio(record.previewUrl);
       newAudio.play().catch((error) => {
         console.error('Error playing audio:', error);
@@ -81,7 +85,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
-    arrows: true, // Ensure arrows are enabled for navigation
+    arrows: true,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
       { breakpoint: 768, settings: { slidesToShow: 1 } },
@@ -97,6 +101,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
           const artistName =
             record.artist?.name || record.artistName || 'Unknown Artist';
           const isLiked = likedRecords.includes(record.id);
+          const isDeleting = deletingIds.includes(record.id);
 
           return (
             <div key={record.id} className="record-slide">
@@ -109,6 +114,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
                   className="overlay-button delete-button"
                   onClick={() => handleDelete(record.id)}
                   title="Delete"
+                  disabled={isDeleting}
                 >
                   🗑️
                 </button>
