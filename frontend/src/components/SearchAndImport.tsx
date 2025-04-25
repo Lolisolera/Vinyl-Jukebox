@@ -42,9 +42,15 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
   };
 
   const handleImport = async (trackId: string) => {
+    if (!trackId) {
+      console.error("Invalid trackId");
+      alert("Invalid trackId");
+      return;
+    }
+
     try {
       const newRecord = await addRecordFromDeezer(trackId);
-      onTrackImported(newRecord); // Call to add the track without alert
+      onTrackImported(newRecord); // Add the track without alert
       setQuery('');
       setResults([]);
     } catch (error: any) {
