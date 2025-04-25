@@ -82,6 +82,8 @@ public class RecordController {
             recordService.deleteRecord(id);
             return ResponseEntity.noContent().build(); // 204 No Content
         } catch (Exception e) {
+            // Log the error for debugging
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while deleting the record: " + e.getMessage());
         }

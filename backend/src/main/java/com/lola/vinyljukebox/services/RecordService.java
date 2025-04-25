@@ -9,6 +9,7 @@ import com.lola.vinyljukebox.repositories.ArtistRepository;
 import com.lola.vinyljukebox.repositories.GenreRepository;
 import com.lola.vinyljukebox.repositories.RecordRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -119,25 +120,30 @@ public class RecordService {
         return createOrUpdateRecord(record);
     }
 
+    @Transactional
     public void deleteRecord(Long id) {
         Optional<Record> recordOpt = recordRepository.findById(id);
         if (recordOpt.isPresent()) {
             Record record = recordOpt.get();
+            System.out.println("Deleting record: " + record.getTitle());
 
             // Break relationships and remove dependencies
             if (record.getAlbumCover() != null) {
-                record.setAlbumCover(null);
+                record.setAlbumCover(null); // Unlink album cover
             }
 
             if (record.getGenres() != null) {
-                record.getGenres().clear(); // Clear join table
+                record.getGenres().clear(); // Clear join table for genres
             }
 
-            // Save changes before deleting
+            // Ensure the record is updated with broken links before deleting
             recordRepository.save(record);
 
             // Delete the record from the database
             recordRepository.deleteById(id);
+            System.out.println("Record with ID " + id + " deleted successfully.");
+        } else {
+            System.err.println("Record with ID " + id + " not found.");
         }
     }
 }
