@@ -50,7 +50,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
 
     try {
       const newRecord = await addRecordFromDeezer(trackId);
-      onTrackImported(newRecord); // Add the track without alert
+      onTrackImported(newRecord);
       setQuery('');
       setResults([]);
     } catch (error: any) {
