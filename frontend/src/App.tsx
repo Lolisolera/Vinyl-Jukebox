@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllRecords, Record, deleteRecord } from './services/recordService'; // Import deleteRecord here
+import { getAllRecords, Record, deleteRecord } from './services/recordService';
 import VinylCarousel from './components/VinylCarousel';
 import JukeboxFrame from './components/JukeboxFrame';
 import './App.scss';
@@ -18,11 +18,15 @@ const App = () => {
   }, []);
 
   const handleDelete = async (id: number) => {
+    const recordExists = records.some((r) => r.id === id);
+    if (!recordExists) return; // Prevent double-deletion attempt
+
     try {
-      await deleteRecord(id);  // Ensure deleteRecord is used here
+      await deleteRecord(id);
       setRecords((prev) => prev.filter((record) => record.id !== id));
     } catch (error) {
       console.error('Failed to delete track:', error);
+      alert('❌ Failed to delete the track. Please try again later.');
     }
   };
 
