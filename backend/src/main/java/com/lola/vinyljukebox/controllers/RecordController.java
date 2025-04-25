@@ -73,6 +73,8 @@ public class RecordController {
     // DELETE: Specific record by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRecord(@PathVariable Long id) {
+        System.out.println("✅ DELETE endpoint hit for record ID: " + id); // Added log for debug
+
         Record record = recordService.getRecordById(id);
         if (record == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -82,7 +84,6 @@ public class RecordController {
             recordService.deleteRecord(id);
             return ResponseEntity.noContent().build(); // 204 No Content
         } catch (Exception e) {
-            // Log the error for debugging
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while deleting the record: " + e.getMessage());
