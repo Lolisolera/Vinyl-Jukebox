@@ -1,3 +1,4 @@
+
 package com.lola.vinyljukebox.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,24 +49,25 @@ public class DeezerIntegrationService {
 
                 for (Map<String, Object> item : items) {
                     String previewUrl = (String) item.get("preview");
-                    String titleValue = (String) item.get("title");
 
-                    Map<String, Object> artistMap = (Map<String, Object>) item.get("artist");
-                    Map<String, Object> album = (Map<String, Object>) item.get("album");
-                    String artistName = artistMap != null ? (String) artistMap.get("name") : null;
-                    String albumCoverUrl = album != null ? (String) album.get("cover_medium") : null;
-
-                    // ✅ Skip tracks missing required fields
-                    if (previewUrl == null || previewUrl.isEmpty() || !previewUrl.endsWith(".mp3")) {
+                    // ✅ Skip tracks with missing or empty previews
+                    if (previewUrl == null || previewUrl.isEmpty()) {
                         continue;
                     }
 
                     DeezerTrackDTO dto = new DeezerTrackDTO();
                     dto.setId(String.valueOf(item.get("id")));
-                    dto.setTitle(titleValue != null ? titleValue : "Unknown Title");
+                    dto.setTitle((String) item.get("title"));
                     dto.setPreviewUrl(previewUrl);
-                    dto.setArtistName(artistName != null ? artistName : "Unknown Artist");
-                    dto.setAlbumCoverUrl(albumCoverUrl != null ? albumCoverUrl : "/default-cover.jpg");
+
+                    Map<String, Object> artistMap = (Map<String, Object>) item.get("artist");
+                    dto.setArtistName((String) artistMap.get("name"));
+
+                    Map<String, Object> album = (Map<String, Object>) item.get("album");
+                    if (album != null) {
+                        dto.setAlbumCoverUrl((String) album.get("cover_medium"));
+                    }
+
                     dto.setGenres(new ArrayList<>()); // Deezer doesn't return genres in track search
 
                     results.add(dto);
