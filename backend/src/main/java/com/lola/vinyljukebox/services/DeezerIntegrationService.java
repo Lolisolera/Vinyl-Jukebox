@@ -56,20 +56,16 @@ public class DeezerIntegrationService {
                     String albumCoverUrl = album != null ? (String) album.get("cover_medium") : null;
 
                     // ✅ Skip tracks missing required fields
-                    if (previewUrl == null || previewUrl.isEmpty()
-                            || titleValue == null || titleValue.isEmpty()
-                            || artistName == null || artistName.isEmpty()
-                            || albumCoverUrl == null || albumCoverUrl.isEmpty()
-                            || !previewUrl.endsWith(".mp3")) {
+                    if (previewUrl == null || previewUrl.isEmpty() || !previewUrl.endsWith(".mp3")) {
                         continue;
                     }
 
                     DeezerTrackDTO dto = new DeezerTrackDTO();
                     dto.setId(String.valueOf(item.get("id")));
-                    dto.setTitle(titleValue);
+                    dto.setTitle(titleValue != null ? titleValue : "Unknown Title");
                     dto.setPreviewUrl(previewUrl);
-                    dto.setArtistName(artistName);
-                    dto.setAlbumCoverUrl(albumCoverUrl);
+                    dto.setArtistName(artistName != null ? artistName : "Unknown Artist");
+                    dto.setAlbumCoverUrl(albumCoverUrl != null ? albumCoverUrl : "/default-cover.jpg");
                     dto.setGenres(new ArrayList<>()); // Deezer doesn't return genres in track search
 
                     results.add(dto);
