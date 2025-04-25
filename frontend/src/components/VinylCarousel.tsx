@@ -26,10 +26,18 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteRecord(id);
+      console.log("Attempting to delete record with ID:", id); // Debugging the ID
+
+      await deleteRecord(id); // Deletes track from backend
       onDelete(id); // Immediately update UI after deletion
+      if (audioRef.current && currentlyPlayingId === id) {
+        audioRef.current.pause(); // Stops audio if the track is currently playing
+        audioRef.current = null;
+        setCurrentlyPlayingId(null);
+      }
     } catch (error) {
       console.error('Failed to delete track:', error);
+      alert('❌ Failed to delete the track. Please try again later.');
     }
   };
 
@@ -99,7 +107,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
                 <button
                   className="overlay-button delete-button"
-                  onClick={() => handleDelete(record.id)}
+                  onClick={() => handleDelete(record.id)} // Deletes the record
                   title="Delete"
                 >
                   🗑️
