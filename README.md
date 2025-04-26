@@ -47,6 +47,7 @@ A retro-inspired full-stack web application where users can search for and play 
 Check out the **Vinyl Jukebox app** live here:  
 👉 [https://vinyl-jukebox.netlify.app](https://vinyl-jukebox.netlify.app)
 
+
 💡 To start using the app, insert a virtual £1 coin, search for a track, and enjoy the music!
 
 
