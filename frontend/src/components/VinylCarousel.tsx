@@ -31,7 +31,7 @@ const VinylCarousel = ({ records, onDelete, highlightedId }: Props) => {
 
     try {
       console.log("Attempting to delete record with ID:", id);
-      await deleteRecord(id); // Deletes from backend
+      await deleteRecord(id);
       onDelete(id); // Update frontend UI
       if (audioRef.current && currentlyPlayingId === id) {
         audioRef.current.pause();
