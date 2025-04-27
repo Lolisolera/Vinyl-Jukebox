@@ -5,7 +5,6 @@ import com.lola.vinyljukebox.entities.AlbumCover;
 import com.lola.vinyljukebox.entities.Artist;
 import com.lola.vinyljukebox.entities.Genre;
 import com.lola.vinyljukebox.entities.Record;
-import com.lola.vinyljukebox.repositories.AlbumCoverRepository;
 import com.lola.vinyljukebox.repositories.ArtistRepository;
 import com.lola.vinyljukebox.repositories.GenreRepository;
 import com.lola.vinyljukebox.repositories.RecordRepository;
@@ -23,13 +22,11 @@ public class RecordService {
     private final RecordRepository recordRepository;
     private final ArtistRepository artistRepository;
     private final GenreRepository genreRepository;
-    private final AlbumCoverRepository albumCoverRepository;
 
-    public RecordService(RecordRepository recordRepository, ArtistRepository artistRepository, GenreRepository genreRepository, AlbumCoverRepository albumCoverRepository) {
+    public RecordService(RecordRepository recordRepository, ArtistRepository artistRepository, GenreRepository genreRepository) {
         this.recordRepository = recordRepository;
         this.artistRepository = artistRepository;
         this.genreRepository = genreRepository;
-        this.albumCoverRepository = albumCoverRepository;
     }
 
     public List<Record> getAllRecords() {
@@ -117,7 +114,7 @@ public class RecordService {
                 cover.setImageUrl(dto.getAlbumCoverUrl());
             }
         } else {
-            System.out.println("⚠️ Missing album cover URL for: " + dto.getTitle());
+            System.out.println("Missing album cover URL for: " + dto.getTitle());
         }
 
         return createOrUpdateRecord(record);
@@ -148,41 +145,5 @@ public class RecordService {
         } else {
             System.err.println("Record with ID " + id + " not found.");
         }
-    }
-
-    // ➡️ New method to manually create seeded records
-    public Record createRecordManually(String title, int releaseYear, String artistName, String genreName, String previewUrl, String albumCoverUrl) {
-        Artist artist = artistRepository.findByName(artistName)
-                .orElseGet(() -> {
-                    Artist newArtist = new Artist();
-                    newArtist.setName(artistName);
-                    return artistRepository.save(newArtist);
-                });
-
-        Genre genre = genreRepository.findByName(genreName)
-                .orElseGet(() -> {
-                    Genre newGenre = new Genre();
-                    newGenre.setName(genreName);
-                    return genreRepository.save(newGenre);
-                });
-
-        AlbumCover albumCover = new AlbumCover();
-        albumCover.setImageUrl(albumCoverUrl);
-        albumCover = albumCoverRepository.save(albumCover);
-
-        Record record = new Record();
-        record.setTitle(title);
-        record.setReleaseYear(releaseYear);
-        record.setPreviewUrl(previewUrl);
-        record.setArtist(artist);
-        record.setGenres(Set.of(genre));
-        record.setAlbumCover(albumCover);
-
-        return recordRepository.save(record);
-    }
-
-    // ➡️ New method to count records
-    public long countRecords() {
-        return recordRepository.count();
     }
 }
