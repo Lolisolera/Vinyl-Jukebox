@@ -51,6 +51,13 @@ Check out the **Vinyl Jukebox app** live here:
 💡 To start using the app, insert a virtual £1 coin, search for a track, and enjoy the music!
 
 
+## ⚠️ Important Note About Deezer Previews
+
+Music previews are streamed live from the Deezer Public API.  
+Due to external licensing restrictions, **some previews may expire or become unavailable** over time.  
+The app handles this gracefully by informing users when a preview cannot be played.
+
+
 ### 🧠 Pseudocode
 See pseudocode.md for a detailed project breakdown, including architecture, components, flow, and database schema.
 
