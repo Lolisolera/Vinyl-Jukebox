@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // Handle errors from external HTTP APIs like Spotify
+    // Handle errors from external HTTP APIs like Deezer
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<Object> handleHttpClientError(HttpClientErrorException ex, WebRequest request) {
         return buildErrorResponse("External API Error: " + ex.getMessage(), ex.getStatusCode());
