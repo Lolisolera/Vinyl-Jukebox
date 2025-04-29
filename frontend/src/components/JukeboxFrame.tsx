@@ -23,7 +23,7 @@ const JukeboxFrame = ({ children, onTrackImported }: JukeboxFrameProps) => {
       className={`jukebox-frame ${!coinInserted ? 'locked' : ''}`}
       aria-label="Vinyl Jukebox container"
     >
-      {/* 🔸 Top Arch */}
+      {/* Top Arch */}
       <div className="jukebox-arch">
         <div
           className="coin-slot"
@@ -47,7 +47,7 @@ const JukeboxFrame = ({ children, onTrackImported }: JukeboxFrameProps) => {
         </div>
       ) : (
         <div className="jukebox-search">
-          <h3>🔍 Search and add a record</h3>
+          <h3>Search and add a record</h3>
           {/* Now guaranteed defined */}
           <SearchAndImport onTrackImported={onTrackImported} />
         </div>

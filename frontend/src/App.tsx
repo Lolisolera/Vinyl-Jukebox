@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllRecords, Record } from './services/recordService'; // ✅ Removed deleteRecord import
+import { getAllRecords, Record } from './services/recordService'; 
 import VinylCarousel from './components/VinylCarousel';
 import JukeboxFrame from './components/JukeboxFrame';
 import './App.scss';
@@ -18,7 +18,7 @@ const App = () => {
   }, []);
 
   const handleDelete = (id: number) => {
-    // ✅ No backend call here — just update state
+    // No backend call here — just update state
     setRecords((prev) => prev.filter((record) => record.id !== id));
   };
 

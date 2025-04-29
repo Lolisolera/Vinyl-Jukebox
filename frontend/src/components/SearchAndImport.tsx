@@ -76,7 +76,7 @@ const SearchAndImport = ({ onTrackImported }: Props) => {
 
       {!loading && query && results.length === 0 && (
         <p style={{ color: 'gray', fontStyle: 'italic', marginTop: '1rem' }}>
-          😢 Sorry, no tracks found for "<strong>{query}</strong>".
+          Sorry, no tracks found for "<strong>{query}</strong>".
         </p>
       )}
 

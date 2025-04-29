@@ -5,7 +5,7 @@ $breakpoints: (
   'desktop': 1200px
 );
 
-// ✅ Use map.get() instead of map-get()
+
 @use 'sass:map';
 
 @mixin respond-to($breakpoint) {
@@ -16,6 +16,6 @@ $breakpoints: (
       @content;
     }
   } @else {
-    @warn "🚨 Unknown breakpoint: #{$breakpoint}. Please use one of: #{map.keys($breakpoints)}.";
+    @warn " Unknown breakpoint: #{$breakpoint}. Please use one of: #{map.keys($breakpoints)}.";
   }
 }

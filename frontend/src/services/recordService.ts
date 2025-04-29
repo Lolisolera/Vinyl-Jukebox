@@ -49,12 +49,12 @@ export const deleteRecord = async (id: number): Promise<void> => {
   try {
     const response = await axios.delete(`/records/${id}`);
     if (response.status === 204 || response.status === 200) {
-      console.log(`✅ Record with ID: ${id} deleted successfully.`);
+      console.log(` Record with ID: ${id} deleted successfully.`);
     } else {
-      console.warn(`⚠️ Unexpected response status: ${response.status} when deleting record with ID: ${id}`);
+      console.warn(` Unexpected response status: ${response.status} when deleting record with ID: ${id}`);
     }
   } catch (error) {
-    console.error(`❌ Error deleting record with ID: ${id}`, error);
+    console.error(` Error deleting record with ID: ${id}`, error);
     throw error;
   }
 };
