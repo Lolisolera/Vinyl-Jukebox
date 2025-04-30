@@ -123,7 +123,6 @@ TABLE album_cover (
 ### Features
 
 - “Insert £1” enables access
-- After 3 tracks played, access locks again
 - Newly imported track scrolls into view & flashes
 - Coin sound effect
 - Neon flashing insert message
@@ -134,17 +133,18 @@ TABLE album_cover (
 ## 4. DEPLOYMENT PLAN
 
 ### Frontend (React + Vite)
-- **Host**: Netlify (free)
-- `npm run build` → auto-deploy from GitHub
-- Set `VITE_API_URL` in Netlify environment settings
+- **Host**: Netlify (free tier)
+- Auto-deploys from GitHub on `npm run build`
+- `VITE_API_URL` set via Netlify environment variables
 
 ### Backend (Spring Boot + Maven)
-- **Host**: Railway (free tier)
-- Connect GitHub repo
-- Add environment variables:
-    - `DB_URL`, `DB_USER`, `DB_PASS`
-    - `DEEZER_ID`, `DEEZER_SECRET`
+- **Host**: Railway (paid plan)
+- GitHub repo connected for continuous deployment
+- Environment variables configured in Railway:
+  - `DB_URL`, `DB_USER`, `DB_PASS`
 
 ### Database (PostgreSQL)
-- Hosted on **Railway**
-- Replace local pgAdmin settings with Railway connection string
+- Hosted and managed via Railway
+- Connected to pgAdmin for local database browsing and queries
+- Secure connection string set via Railway environment settings
+
